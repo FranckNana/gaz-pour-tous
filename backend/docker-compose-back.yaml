@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - pgdata:/storage/postgresql/data 
+      - ./initdb:/docker-entrypoint-initdb.d
+    healthcheck:      
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 10s  
+  back-end:
+    container_name: back-end
+    build: ./flask
+    environment:
+      DEBUG: False
+      DATABASE_URL: postgresql://postgres:${PG_PASSWORD}@db/${PG_DB}
+    ports:
+      - 5000:5000
+    expose:
+      - "5000"
+    depends_on:
+      - db  
+    links: 
+        - db
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PG_PASSWORD}
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    depends_on:
+      - db
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+volumes:
+  pgdata:
+  initdb:
