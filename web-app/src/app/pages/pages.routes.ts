@@ -21,6 +21,11 @@ export const routes: Routes = [
         loadComponent: () => import('./bouteille-list/bouteille-list.component').then(c => c.BouteilleListComponent),
         data: { breadcrumb: 'Bouteilles' }
       },
+      {
+        path: 'rapport-sub',
+        loadComponent: () => import('./rapport-sub/rapport-sub.component').then(c => c.RapportSubComponent),
+        data: { breadcrumb: 'Rapport-sub' }
+      },
       { 
         path: 'profile', 
         loadChildren: () => import('./profile/profile.routes').then(p => p.routes),

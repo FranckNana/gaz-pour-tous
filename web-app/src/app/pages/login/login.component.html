@@ -1,3 +1,4 @@
+
 <mat-sidenav-container>
   <div fxLayout="row" fxLayoutAlign="center center" class="h-100">
     <form
@@ -8,19 +9,23 @@
       fxFlex.sm="60"
       class="mat-elevation-z24"
     >
+      <img mat-card-image src="img/logo/logo_sans_texte.png" alt="slogan" style="width: 100%; height: 280px;">
       <mat-card class="p-0 box">
         <div
           fxLayout="column"
           fxLayoutAlign="center center"
-          class="bg-primary box-header"
+          class="box-header"
+          style="background-color: rgb(76, 194, 104);"
         >
+
           <button
             mat-fab
             color="accent"
             class="mat-elevation-z12"
             (click)="onSubmit(form.value)"
-          >
+          > 
             <mat-icon>exit_to_app</mat-icon>
+            
           </button>
           <a mat-button routerLink="/register"
             >Vous n'avez pas de compte? Inscrivez-vous!</a
@@ -38,16 +43,16 @@
           >
             <!-- <span class="box-content-header">translateX</span> -->
             <mat-form-field class="w-100">
-              <input matInput placeholder="Email" formControlName="email" />
+              <input matInput placeholder="Username" formControlName="username" />
               <mat-error>
-                @if (form.controls.email.errors?.required) { Email is required }
-                @if (form.controls.email.hasError('invalidEmail')) { Invalid
+                @if (form.controls.username.errors?.required) { Username is required}
+                @if (form.controls.username.hasError('invalidUsername')) { Invalid
                 email address }
               </mat-error>
             </mat-form-field>
             <mat-form-field class="w-100">
               <input
-                matInput
+                matInput  
                 placeholder="Password"
                 formControlName="password"
               />
@@ -67,7 +72,11 @@
             SIGN IN
           </button>
         </mat-card-content>
+        
       </mat-card>
+      <img mat-card-image src="img/logo/texte-logo.png" alt="slogan" style="width: 100%;">
     </form>
+    
   </div>
+
 </mat-sidenav-container>

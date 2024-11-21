@@ -6,30 +6,19 @@
                     <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit(form.value);">
                         <mat-icon>person_add</mat-icon>
                     </button>
-                    <a mat-button routerLink="/login">Already have an account? Sign in!</a>
+                    <a mat-button routerLink="/login">Avez vous déjà un compte? connectez-vous ici!</a>
                 </div>
                 <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
                     <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">
-                        <span class="box-content-header">Register member</span>  
+                        <span class="box-content-header">Ajouter un marketeur</span>  
                         <mat-form-field class="w-100">
-                            <input matInput placeholder="Full Name" formControlName="name">
+                            <input matInput placeholder="Username" formControlName="username">
                             <mat-error>
-                                @if (form.controls.name.errors?.required) {
-                                    Full Name is required
+                                @if (form.controls.username.errors?.required) {
+                                    Username is required
                                 }
-                                @if (form.controls.name.hasError('minlength')) {
-                                    Full Name isn't long enough, minimum of 3 characters
-                                }
-                            </mat-error> 
-                        </mat-form-field>
-                        <mat-form-field class="w-100">
-                            <input matInput placeholder="Email" formControlName="email">
-                            <mat-error>
-                                @if (form.controls.email.errors?.required) {
-                                    Email is required
-                                }
-                                @if (form.controls.email.hasError('invalidEmail')) {
-                                    Invalid email address
+                                @if (form.controls.username.hasError('invalidUsername')) {
+                                    Invalid username
                                 }
                             </mat-error> 
                         </mat-form-field>
@@ -56,7 +45,7 @@
                             </mat-error>
                         </mat-form-field>
                     </mat-card>
-                    <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">SIGN UP</button>
+                    <button mat-raised-button color="primary" class="mat-elevation-z12 box-button" type="submit">Enregistrer</button>
                 </mat-card-content>
             </mat-card>            
         </form> 

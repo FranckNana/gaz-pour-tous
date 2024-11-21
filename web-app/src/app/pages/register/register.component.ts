@@ -9,6 +9,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
+import { Marketeur } from '../../common/models/marketeur.model';
+import { TypeProfile } from '../../common/models/typeProfile.model';
+import { RegisterService } from '@services/register.service';
 
 @Component({
   selector: 'app-register',
@@ -23,16 +26,18 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
     MatIconModule,
     MatInputModule
   ],
+  providers: [RegisterService],
   templateUrl: './register.component.html'
 })
 export class RegisterComponent {
+
   public form: FormGroup;
   public settings: Settings;
-  constructor(public settingsService: SettingsService, public fb: FormBuilder, public router: Router){
+
+  constructor(public settingsService: SettingsService, public registerService: RegisterService, public fb: FormBuilder, public router: Router){
     this.settings = this.settingsService.settings; 
     this.form = this.fb.group({
-      'name': [null, Validators.compose([Validators.required, Validators.minLength(3)])],
-      'email': [null, Validators.compose([Validators.required, emailValidator])],
+      'username': [null, Validators.compose([Validators.required,])],
       'password': ['', Validators.required],
       'confirmPassword': ['', Validators.required]
     },{validator: matchingPasswords('password', 'confirmPassword')});
@@ -40,7 +45,20 @@ export class RegisterComponent {
 
   public onSubmit(values: Object): void {
     if (this.form.valid) {
-      this.router.navigate(['/login']);
+      const formValue = this.form.value;
+      const newMarketer = new Marketeur(
+        formValue['password'],
+        Array.of(TypeProfile.marketeur.toString()),
+        formValue['username']
+      )
+      this.registerService.saveMarketeur(newMarketer).subscribe(
+        (response) => {
+          console.log("enregistrement du marketeur ok")
+          this.router.navigate(['/login']);
+        },(error)=>{
+          console.log(error)
+        }   
+      );    
     }
   }
 
@@ -49,4 +67,5 @@ export class RegisterComponent {
       this.settings.loadingSpinner = false; 
     }); 
   }
+
 }
