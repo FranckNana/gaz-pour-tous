@@ -9,7 +9,7 @@ import {
   shareReplay,
   takeUntil,
   ɵɵdefineInjectable
-} from "./chunk-3GOPYOJX.js";
+} from "./chunk-SC6563SD.js";
 
 // node_modules/@angular/cdk/fesm2022/observers/private.mjs
 var loopLimitExceededErrorHandler = (e) => {
@@ -120,4 +120,4 @@ var SharedResizeObserver = _SharedResizeObserver;
 export {
   SharedResizeObserver
 };
-//# sourceMappingURL=chunk-YTUVSWY5.js.map
+//# sourceMappingURL=chunk-4TRFEW55.js.map

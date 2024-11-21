@@ -1,6 +1,6 @@
 import {
   DOCUMENT
-} from "./chunk-SX3LUSOW.js";
+} from "./chunk-UVNVDHPJ.js";
 import {
   Directive,
   EventEmitter,
@@ -20,7 +20,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-3GOPYOJX.js";
+} from "./chunk-SC6563SD.js";
 
 // node_modules/@angular/cdk/fesm2022/bidi.mjs
 var DIR_DOCUMENT = new InjectionToken("cdk-dir-doc", {
@@ -186,4 +186,4 @@ export {
   Dir,
   BidiModule
 };
-//# sourceMappingURL=chunk-CT3BUSLV.js.map
+//# sourceMappingURL=chunk-KOXK4FNE.js.map
