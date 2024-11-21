@@ -21,10 +21,9 @@ services:
     environment:
       DEBUG: False
       DATABASE_URL: postgresql://postgres:${PG_PASSWORD}@db/${PG_DB}
+      SessionTimeInSeconds: ${SessionTimeInSeconds}
     ports:
       - 5000:5000
-    expose:
-      - "5000"
     depends_on:
       - db  
     links: 

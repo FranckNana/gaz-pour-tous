@@ -7,6 +7,10 @@ from user import User
 from flasgger import Swagger
 import pg_utils
 from utils import getParam, sint, MyEncoder
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -18,18 +22,30 @@ swagger = Swagger(app)
 jsonEncoder = MyEncoder()
 
 connectedUsers = {}
+sessionTimeInSeconds = sint(os.getenv("SessionTimeInSeconds"))
+if sessionTimeInSeconds is None:
+    sessionTimeInSeconds = 10 * 60
 
 def allowConnexion(profilType = None): 
     if not current_user.is_authenticated:
         return False
-    user = current_user
-    if user.username in connectedUsers:
-        if connectedUsers[user.username] < datetime.datetime.now():
-            del connectedUsers[user.username]
-            return False
+    if (datetime.datetime.now() - current_user.connexionTime).total_seconds() > sessionTimeInSeconds:
+        if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
+            del connectedUsers[current_user.username]
+        logout_user()
+        return False
+    connectedUsers[current_user.username] = (current_user.connexionTime, current_user.accountId)
     if profilType is not None:
         return current_user.profileType == profilType
     return True
+
+def isConnected():
+    if current_user.is_authenticated and (datetime.datetime.now() - current_user.connexionTime).total_seconds() > sessionTimeInSeconds:
+        if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
+            del connectedUsers[current_user.username]
+        logout_user()
+        return False
+    return current_user.is_authenticated
 
 app.config.update(
     DEBUG = True,
@@ -50,13 +66,14 @@ def home():
         description: Tested result
         schema:
           type: string
-      403:
+      401:
         description: Non authorized
         schema:
           type: string
     """
     if not allowConnexion():
-        return abort(403, "Not authorized")
+        print("============== > User is not connected")
+        return Response("Not authorized", 401)
     return Response("Hello World! " + str(current_user))
 
 @app.route("/logout")
@@ -78,8 +95,9 @@ def logout():
         schema:
           type: string
     """
+    if current_user.is_authenticated:
+        del connectedUsers[current_user.username]
     logout_user()
-    del connectedUsers[current_user.username]
     return Response('Logged out')
 
 @app.route("/register", methods=["POST"])
@@ -151,13 +169,15 @@ def register():
         schema:
           $ref: '#/definitions/LogResponse'
     """
+    if isConnected():
+        print("============== > User is connected")
+        return Response("Non authorized: Should not be connected", 401)
     username = getParam('username', request.form, request.json)
     profiles = getParam('profiles', request.form, request.json)
     password = getParam('password', request.form, request.json)
-    if current_user.is_authenticated:
-        return abort(403, "Should not be connected")
     if password is None or profiles is None or username is None:
-        return abort(403, "Wrong form")
+        print(f"============== > Incorrect form: password={password} profiles={profiles} username={username}")
+        return Response("Wrong form", 403)
     pw_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     with pg_utils.getConnection() as c:
         with c.cursor() as s:
@@ -177,7 +197,7 @@ def register():
             except Exception as err:
                 print(f"Unexpected {err=}, {type(err)=}")
                 c.rollback()
-                return abort(403, "Failed")
+                return Response(repr(err), 403)
 
 
 @app.route("/login", methods=["POST"])
@@ -206,13 +226,15 @@ def login():
         schema:
           $ref: '#/definitions/LogResponse'
     """
+    if isConnected():
+        print(f"============== > User is connected")
+        return Response("Non authorized: Should not be connected", 401)
     username = getParam('username', request.form, request.json)
     profil = getParam('profil', request.form, request.json)
     password = getParam('password', request.form, request.json)
     if password is None or profil is None or username is None:
-        return abort(403, "Wrong form")
-    if current_user.is_authenticated:
-        return abort(403, "Should not be connected")
+        print(f"============== > Incorrect form: password={password} profil={profil} username={username}")
+        return Response("Wrong form", 403)
     with pg_utils.getConnection() as c:
         with c.cursor() as s:
             s.execute(''' 
@@ -229,38 +251,37 @@ def login():
                       ''', (username, profil))
             results = s.fetchall()
             if len(results) == 1:
-                user = User(*results[0])
-                end_session = datetime.datetime.now() + datetime.timedelta(minutes = 30)
+                user = User(*results[0], datetime.datetime.now())
                 if bcrypt.check_password_hash(user.passwordHash, password):
-                    if user.username in connectedUsers:
-                        if connectedUsers[user.username] < datetime.datetime.now():
-                            del connectedUsers[user.username]
-                        else:
-                          return abort(401, "Same acounte all ready connected")
-                    connectedUsers[user.username] = end_session
-                    login_user(user, False, timedelta(minutes=30))
+                    if user.username in connectedUsers and (datetime.datetime.now() - connectedUsers[user.username][0]).total_seconds() < sessionTimeInSeconds:
+                        print(f"============== > User already connected")
+                        return Response("Same account all ready connected", 401)
+                    connectedUsers[user.username] = (datetime.datetime.now(), results[0][0])
+                    login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
                     return Response("{success: true}")
-            return abort(401, "Wrong credentials")
+            print(f"============== > Wrong credentials")
+            return Response("Wrong credentials", 401)
 
 @login_manager.user_loader
 def load_user(userid):
-    with pg_utils.getConnection() as c:
-        with c.cursor() as s:
-            s.execute(''' 
-                      SELECT 
-                        acc_prof."Id",  
-                        acc."Username",
-                        acc."PasswordHash",
-                        acc."CreatedAt",
-                        prof."Name"
-                      FROM "Account" acc 
-                      JOIN "AccountProfil" acc_prof ON acc_prof."AccountId" = acc."Id"
-                      JOIN "ProfilType" prof ON prof."Id" = acc_prof."ProfilTypeId"
-                      WHERE acc_prof."Id" = %s
-                      ''', (userid))
-            results = s.fetchall()
-            if len(results) == 1:
-                return User(*results[0])
+    if userid in connectedUsers and (datetime.datetime.now() - connectedUsers[userid][0]).total_seconds() < sessionTimeInSeconds:
+        with pg_utils.getConnection() as c:
+            with c.cursor() as s:
+                s.execute(''' 
+                          SELECT 
+                            acc_prof."Id",  
+                            acc."Username",
+                            acc."PasswordHash",
+                            acc."CreatedAt",
+                            prof."Name"
+                          FROM "Account" acc 
+                          JOIN "AccountProfil" acc_prof ON acc_prof."AccountId" = acc."Id"
+                          JOIN "ProfilType" prof ON prof."Id" = acc_prof."ProfilTypeId"
+                          WHERE acc_prof."Id" = %s
+                          ''', (connectedUsers[userid][1], ))
+                results = s.fetchall()
+                if len(results) == 1:
+                    return User(*results[0], connectedUsers[userid][0])
     return None
 
 
@@ -300,17 +321,19 @@ def emplisseur_receive_empty_bottle():
           type: string
     """
     if not allowConnexion('emplisseur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre remplie', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
     
 @app.route("/emplisseur/fill-empty-bottle", methods = ["POST"])
 @login_required
@@ -343,17 +366,19 @@ def emplisseur_fill_empty_bottle():
           type: string
     """
     if not allowConnexion('emplisseur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre livree au marketeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
     
 @app.route("/emplisseur/ship-bottle", methods = ["POST"])
 @login_required
@@ -386,17 +411,19 @@ def emplisseur_ship_empty_bottle():
           type: string
     """
     if not allowConnexion('emplisseur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au marketeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
         
 
 #########################################################################
@@ -433,17 +460,19 @@ def marketeur_receive_full_bottle():
           type: string
     """
     if not allowConnexion('marketeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'chez marketeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
     
 @app.route("/marketeur/receive-empty-bottle", methods = ["POST"])
@@ -477,17 +506,19 @@ def marketeur_receive_empty_bottle():
           type: string
     """
     if not allowConnexion('marketeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez marketeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 @app.route("/marketeur/ship-full-bottle", methods = ["POST"])
 @login_required
@@ -520,17 +551,19 @@ def marketeur_ship_full_bottle():
           type: string
     """
     if not allowConnexion('marketeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au revendeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 #########################################################################
 ## revendeur
@@ -566,17 +599,19 @@ def revendeur_receive_full_bottle():
           type: string
     """
     if not allowConnexion('revendeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'pleine chez le revendeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 
 @app.route("/revendeur/sell-bottle", methods = ["POST"])
@@ -624,9 +659,11 @@ def revendeur_sell_bottle():
           amount:
             type: number
             description: amount
+            required: true
           mode:
             type: string
             description: Payment mode
+            required: true
     responses:
       200:
         description: User registered
@@ -646,15 +683,15 @@ def revendeur_sell_bottle():
           type: string
     """
     if not allowConnexion('revendeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     clientHash = getParam('clientHash', request.form, request.json)
     amount = sint(getParam('amount', request.form, request.json))
     mode = getParam('mode', request.form, request.json)
-    if bottleHash is None or clientHash is None or amount is None or mode is None: 
-        return abort(400, "Bad request")
-    if amount <= 0:
-        return abort(400, "Bad request")
+    if bottleHash is None or clientHash is None or amount is None or mode is None or amount <= 0: 
+        print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash} amount={amount} mode={mode}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     clientId = pg_utils.upsertClient(clientHash)
     try:
@@ -663,7 +700,7 @@ def revendeur_sell_bottle():
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 @app.route("/revendeur/receive-bottle-from-client", methods = ["POST"])
 @login_required
@@ -696,11 +733,13 @@ def revendeur_receive_empty_bottle():
           type: string
     """
     if not allowConnexion('revendeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     clientHash = getParam('clientHash', request.form, request.json)
     if bottleHash is None or clientHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     clientId = pg_utils.upsertClient(clientHash)
     try:
@@ -709,7 +748,7 @@ def revendeur_receive_empty_bottle():
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 
 
@@ -744,23 +783,25 @@ def revendeur_ship_bottle():
           type: string
     """
     if not allowConnexion('revendeur'):
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     if bottleHash is None:
-        return abort(400, "Bad request")
+        print(f"============== > Incorrect form: bottleHash={bottleHash}")
+        return Response("Bad request", 400)
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide en cours de livraison au marketeur', current_user.id)
         return Response("{success: true}")
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 
 #########################################################################
 ## Every body
 
-@app.route("/current-bottles", methods = ["POST"])
+@app.route("/current-bottles", methods = ["GET"])
 @login_required
 def user_current_bottles():
     """Endpoint to receive a full bottle.
@@ -810,12 +851,13 @@ def user_current_bottles():
           type: string
     """
     if not allowConnexion():
-        return abort(403, "Not authorized")
+        print(f"============== > User is not connected to with the write profile {str(current_user)}")
+        return Response("Not authorized", 401)
     try:
         return jsonEncoder.encode(pg_utils.listUserBottle(current_user.id))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return abort(403, repr(err))
+        return Response(repr(err), 403)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

@@ -10,7 +10,7 @@ Pour lancer, depuis le dossier `backend`:
 Après un correctif, 
 
 
-`docker-compose -f docker-compose-back.yaml build`
+`docker-compose -f docker-compose-back.yaml build --no-cache`
 
 puis
 
