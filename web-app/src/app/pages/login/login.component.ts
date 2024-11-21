@@ -31,7 +31,7 @@ export class LoginComponent {
   constructor(public settingsService: SettingsService, public fb: FormBuilder, public router: Router){
     this.settings = this.settingsService.settings; 
     this.form = this.fb.group({
-      'email': [null, Validators.compose([Validators.required, emailValidator])],
+      'username': [null, Validators.compose([Validators.required])],
       'password': [null, Validators.compose([Validators.required, Validators.minLength(6)])] 
     });
   }

@@ -43,16 +43,16 @@
           >
             <!-- <span class="box-content-header">translateX</span> -->
             <mat-form-field class="w-100">
-              <input matInput placeholder="Email" formControlName="email" />
+              <input matInput placeholder="Username" formControlName="username" />
               <mat-error>
-                @if (form.controls.email.errors?.required) { Email is required }
-                @if (form.controls.email.hasError('invalidEmail')) { Invalid
+                @if (form.controls.username.errors?.required) { Username is required}
+                @if (form.controls.username.hasError('invalidUsername')) { Invalid
                 email address }
               </mat-error>
             </mat-form-field>
             <mat-form-field class="w-100">
               <input
-                matInput
+                matInput  
                 placeholder="Password"
                 formControlName="password"
               />
