@@ -1,9 +1,10 @@
 import { Menu } from '../models/menu.model';
 
 export const verticalMenuItems = [ 
-    new Menu (1, 'Dashboard', '/', null, 'dashboard', null, false, 0),
-    new Menu (2, 'Users', '/users', null, 'supervisor_account', null, false, 0), 
-    new Menu (2, 'Bouteilles ', '/bouteille', null, 'note', null, false, 0), 
+    new Menu (1, 'Dashboard', '/gestion', null, 'dashboard', null, false, 0),
+    new Menu (2, 'Acteur / sous-acteur', '/gestion/users', null, 'supervisor_account', null, false, 0), 
+    new Menu (3, 'Suivie de stock ', '/gestion/bouteille', null, 'list', null, false, 0), 
+    new Menu (4, 'Rapport et Subvention ', '/gestion/rapport-sub', null, 'book', null, false, 0), 
 ]
 
 export const horizontalMenuItems = [ 

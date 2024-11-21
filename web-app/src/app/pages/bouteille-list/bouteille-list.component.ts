@@ -15,7 +15,7 @@ import { Bouteille, BouteilleService } from '@services/bouteille-service/bouteil
 })
 export class BouteilleListComponent  implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  public displayedColumns = ['identifiant', 'contenance', 'statut', 'date'];
+  public displayedColumns = ['identifiant', 'contenance', 'statut', 'date', 'detenteur', 'roleDetenteur'];
   public dataSource: any;
  
   constructor(private tablesService:BouteilleService) {

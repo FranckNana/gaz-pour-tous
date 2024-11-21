@@ -23,10 +23,10 @@ import {
 import {
   TemplatePortal
 } from "./chunk-KVWGYSUM.js";
+import "./chunk-LV4M4QBI.js";
 import {
   NG_VALUE_ACCESSOR
 } from "./chunk-57EYAO2Y.js";
-import "./chunk-LV4M4QBI.js";
 import {
   ActiveDescendantKeyManager,
   MAT_OPTGROUP,

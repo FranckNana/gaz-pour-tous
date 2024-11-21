@@ -1,5 +1,6 @@
 <div class="p-2"> 
-    <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">       
+    <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">  
+
         <ng-container matColumnDef="identifiant">
             <mat-header-cell *matHeaderCellDef> Identifiant </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.identifiant}} </mat-cell>
@@ -16,8 +17,17 @@
             <mat-header-cell *matHeaderCellDef> Date mis à jour </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.date_maj}} </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="detenteur">
+            <mat-header-cell *matHeaderCellDef> Détenteur </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.detenteur}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="roleDetenteur">
+            <mat-header-cell *matHeaderCellDef> Rôle du détenteur </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.roleDetenteur}} </mat-cell>
+        </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
     </mat-table>
     <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
 </div>
