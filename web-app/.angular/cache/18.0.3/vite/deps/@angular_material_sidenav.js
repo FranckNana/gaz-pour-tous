@@ -1,10 +1,4 @@
 import {
-  FocusMonitor,
-  FocusTrapFactory,
-  InteractivityChecker,
-  MatCommonModule
-} from "./chunk-3WJG7MUG.js";
-import {
   animate,
   state,
   style,
@@ -18,6 +12,12 @@ import {
   ViewportRuler
 } from "./chunk-JTOCWQHI.js";
 import "./chunk-MEZKX5CD.js";
+import {
+  FocusMonitor,
+  FocusTrapFactory,
+  InteractivityChecker,
+  MatCommonModule
+} from "./chunk-3WJG7MUG.js";
 import {
   ESCAPE,
   hasModifierKey

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Settings, SettingsService } from '@services/settings.service';
@@ -32,6 +32,7 @@ import { Login } from '../../common/models/login';
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
+
   public form: FormGroup;
   public settings: Settings;
   isError : boolean = false;
@@ -48,16 +49,18 @@ export class LoginComponent {
   public onSubmit(values:Object):void {
     if (this.form.valid) {
       const formValue = this.form.value;
-      
-      this.loginService.login(new Login(formValue['password'], formValue['profil'], formValue['username'])).subscribe(
+      const loginObj = new Login(formValue['password'], formValue['profil'], formValue['username']);
+      this.loginService.login(loginObj);/*.subscribe(
         () => {
           this.router.navigate(['/gestion']);
         },(error) =>{
           this.isError = true;
           console.log(error)
         }
-      );
-      //this.router.navigate(['/gestion']);
+      );*/
+      localStorage.setItem('username', loginObj.username);
+      localStorage.setItem('profil', loginObj.profil);
+      this.router.navigate(['/gestion']);
     }
   }
 
@@ -66,4 +69,5 @@ export class LoginComponent {
       this.settings.loadingSpinner = false; 
     });  
   }
+
 }

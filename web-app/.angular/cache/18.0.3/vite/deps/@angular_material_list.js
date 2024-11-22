@@ -2,8 +2,8 @@ import {
   MatDividerModule
 } from "./chunk-MWD2I4MN.js";
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-SUO7VVAA.js";
+  SelectionModel
+} from "./chunk-MEZKX5CD.js";
 import {
   CdkObserveContent,
   FocusKeyManager,
@@ -14,9 +14,6 @@ import {
   ObserversModule,
   RippleRenderer
 } from "./chunk-3WJG7MUG.js";
-import {
-  SelectionModel
-} from "./chunk-MEZKX5CD.js";
 import {
   A,
   ENTER,
@@ -32,6 +29,9 @@ import {
   coerceNumberProperty
 } from "./chunk-SVGSOFCK.js";
 import "./chunk-KOXK4FNE.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-SUO7VVAA.js";
 import {
   CommonModule,
   NgTemplateOutlet

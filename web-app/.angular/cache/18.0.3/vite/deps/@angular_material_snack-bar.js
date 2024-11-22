@@ -3,12 +3,6 @@ import {
   MatButtonModule
 } from "./chunk-IRIYHWXJ.js";
 import {
-  BreakpointObserver,
-  Breakpoints,
-  LiveAnnouncer,
-  MatCommonModule
-} from "./chunk-3WJG7MUG.js";
-import {
   animate,
   state,
   style,
@@ -19,14 +13,8 @@ import {
   Overlay,
   OverlayConfig,
   OverlayModule
-} from "./chunk-B6ZZDX7G.js";
+} from "./chunk-ZSRLW5MA.js";
 import "./chunk-JTOCWQHI.js";
-import "./chunk-MEZKX5CD.js";
-import "./chunk-237XUEJ5.js";
-import {
-  Platform
-} from "./chunk-NMA5MAGI.js";
-import "./chunk-SVGSOFCK.js";
 import {
   BasePortalOutlet,
   CdkPortalOutlet,
@@ -34,6 +22,18 @@ import {
   PortalModule,
   TemplatePortal
 } from "./chunk-YJY4RAZK.js";
+import "./chunk-MEZKX5CD.js";
+import {
+  BreakpointObserver,
+  Breakpoints,
+  LiveAnnouncer,
+  MatCommonModule
+} from "./chunk-3WJG7MUG.js";
+import "./chunk-237XUEJ5.js";
+import {
+  Platform
+} from "./chunk-NMA5MAGI.js";
+import "./chunk-SVGSOFCK.js";
 import "./chunk-KOXK4FNE.js";
 import {
   DOCUMENT

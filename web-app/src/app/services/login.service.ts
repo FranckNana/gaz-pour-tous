@@ -26,5 +26,9 @@ export class LoginService {
     return this.http.post<any>("http://localhost:5000/login", JSON.stringify(login), { headers }); 
   }
 
+  logout(){
+    return this.http.get<any>("http://localhost:5000/logout"); 
+  }
+
 
 }

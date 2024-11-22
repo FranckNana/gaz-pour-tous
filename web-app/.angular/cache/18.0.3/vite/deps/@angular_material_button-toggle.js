@@ -1,6 +1,6 @@
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-SUO7VVAA.js";
+  SelectionModel
+} from "./chunk-MEZKX5CD.js";
 import {
   FocusMonitor,
   MatCommonModule,
@@ -8,9 +8,6 @@ import {
   MatRipple,
   MatRippleModule
 } from "./chunk-3WJG7MUG.js";
-import {
-  SelectionModel
-} from "./chunk-MEZKX5CD.js";
 import {
   DOWN_ARROW,
   ENTER,
@@ -24,6 +21,9 @@ import "./chunk-SVGSOFCK.js";
 import {
   Directionality
 } from "./chunk-KOXK4FNE.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-SUO7VVAA.js";
 import "./chunk-UVNVDHPJ.js";
 import {
   Attribute,
