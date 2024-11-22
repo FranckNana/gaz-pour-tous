@@ -20,3 +20,8 @@ puis
 ## Info Back-end
 
 Sur `localhost:5000/apidocs` se trouve la doc swagger écrite à la main. N'hésitez pas en cas de retour.
+
+### Un utilisateur pour jouer
+#### username: sandy
+#### password: yesYes
+Ce compte a tous les profils.
