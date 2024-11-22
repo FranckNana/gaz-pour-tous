@@ -20,8 +20,8 @@
         class="rounded mat-elevation-z6"
       />
       <p>
-        Emilio Verdines <br />
-        <small>Web developer</small>
+        {{username}} <br />
+        <small>{{profil}}</small>
       </p>
     </div>
   </mat-toolbar>
@@ -30,7 +30,7 @@
     <span>Edit Profile</span>
   </a>
   <div class="divider"></div>
-  <a mat-menu-item routerLink="/login">
+  <a mat-menu-item routerLink="/login" (click)="onLogOut()">
     <mat-icon>power_settings_new</mat-icon>
     <span>Log out</span>
   </a>

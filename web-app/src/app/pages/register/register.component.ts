@@ -51,14 +51,8 @@ export class RegisterComponent {
         Array.of(TypeProfile.marketeur.toString()),
         formValue['username']
       )
-      this.registerService.saveMarketeur(newMarketer).subscribe(
-        (response) => {
-          console.log("enregistrement du marketeur ok")
-          this.router.navigate(['/login']);
-        },(error)=>{
-          console.log(error)
-        }   
-      );    
+      this.registerService.saveMarketeur(newMarketer);   
+      this.router.navigate(['/login']); 
     }
   }
 

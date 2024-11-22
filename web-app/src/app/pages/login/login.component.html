@@ -9,26 +9,13 @@
       fxFlex.sm="60"
       class="mat-elevation-z24"
     >
-      <img mat-card-image src="img/logo/logo_sans_texte.png" alt="slogan" style="width: 100%; height: 280px;">
+      <!--img mat-card-image src="img/logo/logo_sans_texte.png" alt="slogan" style="width: 100%; height: 280px;"-->
       <mat-card class="p-0 box">
-        <div
-          fxLayout="column"
-          fxLayoutAlign="center center"
-          class="box-header"
-          style="background-color: rgb(76, 194, 104);"
-        >
+        <div fxLayout="column" fxLayoutAlign="center center" class="bg-primary box-header">
 
-          <button
-            mat-fab
-            color="accent"
-            class="mat-elevation-z12"
-            (click)="onSubmit(form.value)"
-          > 
-            <mat-icon>exit_to_app</mat-icon>
-            
-          </button>
+          <img mat-card-image src="img/logo/logo.ico" alt="slogan" style="height: 40%;">
           <a mat-button routerLink="/register"
-            >Vous n'avez pas de compte? Inscrivez-vous!</a
+            >Vous n'avez pas de compte? <u>Inscrivez-vous!</u></a
           >
         </div>
         <mat-card-content
@@ -43,13 +30,32 @@
           >
             <!-- <span class="box-content-header">translateX</span> -->
             <mat-form-field class="w-100">
+              <!--input matInput placeholder="Username" formControlName="username" /-->
+
+              <mat-label>Choisissez votre profil :</mat-label>
+              <mat-select name="profil" matInput formControlName="profil">
+                <mat-option value="admin">admin</mat-option>
+                <mat-option value="emplisseur">emplisseur</mat-option>
+                <mat-option value="marketeur">marketeur</mat-option>
+                <mat-option value="revendeur">revendeur</mat-option>
+              </mat-select>
+
+              <mat-error>
+                @if (form.controls.profil.errors?.required) { profil is required}
+                @if (form.controls.profil.hasError('invalidProfil')) { Invalid
+                profile address }
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100">
               <input matInput placeholder="Username" formControlName="username" />
               <mat-error>
                 @if (form.controls.username.errors?.required) { Username is required}
                 @if (form.controls.username.hasError('invalidUsername')) { Invalid
-                email address }
+                username address }
               </mat-error>
             </mat-form-field>
+
             <mat-form-field class="w-100">
               <input
                 matInput  
@@ -69,12 +75,14 @@
             class="mat-elevation-z12 box-button"
             type="submit"
           >
-            SIGN IN
+            se connecter
           </button>
+          
         </mat-card-content>
         
+        <p style="color: red; text-align: center;" *ngIf="isError">Veuillez s'il vous plaît verifier le username ou le mot de passe </p>
       </mat-card>
-      <img mat-card-image src="img/logo/texte-logo.png" alt="slogan" style="width: 100%;">
+      <!--img mat-card-image src="img/logo/texte-logo.png" alt="slogan" style="width: 100%;"-->
     </form>
     
   </div>

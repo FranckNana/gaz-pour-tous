@@ -55,20 +55,20 @@ import {
   sortAscendingPriority,
   sortDescendingPriority,
   validateBasis
-} from "./chunk-YKRTPD25.js";
+} from "./chunk-MOZ2YDPF.js";
 import {
   DomSanitizer
-} from "./chunk-CN4FXJKI.js";
-import "./chunk-23ESWTJP.js";
+} from "./chunk-YEWYFCFE.js";
+import "./chunk-DCODCQ2Q.js";
 import {
   coerceBooleanProperty
-} from "./chunk-7BPGDGJM.js";
-import "./chunk-CT3BUSLV.js";
+} from "./chunk-SVGSOFCK.js";
+import "./chunk-KOXK4FNE.js";
 import {
   NgClass,
   NgStyle,
   isPlatformServer
-} from "./chunk-SX3LUSOW.js";
+} from "./chunk-UVNVDHPJ.js";
 import {
   Directive,
   ElementRef,
@@ -94,10 +94,10 @@ import {
   ɵɵdirectiveInject,
   ɵɵgetInheritedFactory,
   ɵɵinject
-} from "./chunk-3GOPYOJX.js";
+} from "./chunk-SC6563SD.js";
 import {
   __spreadValues
-} from "./chunk-GGMOQWJV.js";
+} from "./chunk-JW6Z52O3.js";
 
 // node_modules/@ngbracket/ngx-layout/fesm2022/ngbracket-ngx-layout-extended.mjs
 var _ClassDirective = class _ClassDirective extends BaseDirective2 {

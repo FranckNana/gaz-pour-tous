@@ -1,4 +1,26 @@
-<div class="p-2"> 
+<div class="p-2">
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header>                
+                <mat-card-title>Filtrer les Bouteilles</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <mat-form-field appearance="outline">
+                    <mat-select [formControl]="toppings2" multiple>
+                        <mat-select-trigger>
+                            {{toppings2.value ? toppings2.value[0] : ''}}
+                            @if (toppings2.value?.length > 1) {
+                                <small>(+{{toppings2.value.length - 1}} others)</small>
+                            }                         
+                        </mat-select-trigger>
+                        @for (topping of toppingList2; track topping) {
+                            <mat-option [value]="topping">{{topping}}</mat-option>
+                        }                        
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-content>
+        </mat-card>
+    </div> 
     <mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">  
 
         <ng-container matColumnDef="identifiant">
@@ -11,7 +33,27 @@
         </ng-container>     
         <ng-container matColumnDef="statut">
             <mat-header-cell *matHeaderCellDef> Statut</mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.statut}} </mat-cell>
+            <mat-cell *matCellDef="let element"> 
+                @if(isEncours(element)){
+                    <mat-chip color="warn" highlighted="true" class="info-chip">
+                        {{element.statut}} 
+                    </mat-chip>
+                } @else if (isEnStock(element)) {
+                    <mat-chip color="accent" highlighted="true" class="info-chip">
+                        {{element.statut}} 
+                    </mat-chip>
+                } @else if (isLivre(element)) {
+                    <mat-chip color="primary" highlighted="true" class="info-chip">
+                        {{element.statut}} 
+                    </mat-chip> 
+                }
+                @else if (isRemplis(element)) {
+                    <mat-chip color="blue" highlighted="true" class="info-chip">
+                        {{element.statut}} 
+                    </mat-chip> 
+                }
+               
+            </mat-cell>
         </ng-container>        
         <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date mis à jour </mat-header-cell>

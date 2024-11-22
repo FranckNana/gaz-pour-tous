@@ -46,3 +46,6 @@ testem.log
 Thumbs.db
 
 .editorconfig
+
+# Ignore cache created with the Angular CLI.
+.angular/
