@@ -18,25 +18,13 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PipesModule } from '../../theme/pipes/pipes.module';
 import { MatCardModule } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [ 
-    FormsModule,
-    FlexLayoutModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatMenuModule,
-    MatSlideToggleModule,
-    MatCardModule,
-    NgxPaginationModule,
-    PipesModule,
-    DatePipe,  
+   SharedModule,
     UserDialogComponent
   ],
   templateUrl: './users.component.html',
@@ -61,16 +49,16 @@ export class UsersComponent implements OnInit {
 
   public getUsers(): void {
     this.users = null; //for show spinner each time
-    this.usersService.getUsers().subscribe(users => this.users = users);    
+    this.usersService.getAll().subscribe(users => this.users = users);    
   }
   public addUser(user:User){
-    this.usersService.addUser(user).subscribe(user => this.getUsers());
+    this.usersService.add(user).subscribe(user => this.getUsers());
   }
   public updateUser(user:User){
-    this.usersService.updateUser(user).subscribe(user => this.getUsers());
+    this.usersService.update(user, user.id).subscribe(user => this.getUsers());
   }
   public deleteUser(user:User){
-    this.usersService.deleteUser(user.id).subscribe(user => this.getUsers());
+    this.usersService.delete(user.id).subscribe(user => this.getUsers());
   }
 
 

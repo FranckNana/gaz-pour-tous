@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';  
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
@@ -38,6 +38,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { AlertDialogComponent } from './alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { PipesModule } from '../theme/pipes/pipes.module';
 
 
 @NgModule({
@@ -92,7 +95,12 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     MatCheckboxModule,
     MatRadioModule,
         MatIconModule,
-    MatOptionModule
+    MatOptionModule,
+    NgxPaginationModule,
+    PipesModule,
+    DatePipe,  
+    MatFormFieldModule,
+    
     ],
     exports: [
     RouterModule,
@@ -140,6 +148,10 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
     MatRadioModule,
         MatIconModule,
     MatOptionModule,
+    NgxPaginationModule,
+    PipesModule,
+    DatePipe,  
+    MatFormFieldModule,
     FileUploadComponent,
         AlertDialogComponent,
      ConfirmDialogComponent
