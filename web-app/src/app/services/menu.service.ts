@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common'; 
-import { verticalMenuItems, horizontalMenuItems } from '../common/data/menu';
+import { verticalMenuItems, horizontalMenuItems, verticalMenuItemsSimple } from '../common/data/menu';
 import { Menu } from '../common/models/menu.model';
 
 @Injectable({
@@ -14,6 +14,10 @@ export class MenuService {
     
   public getVerticalMenuItems():Array<Menu> {
     return verticalMenuItems;
+  }
+
+  public getVerticalMenuItemsSimple():Array<Menu> {
+    return verticalMenuItemsSimple;
   }
 
   public getHorizontalMenuItems():Array<Menu> {

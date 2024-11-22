@@ -32,15 +32,20 @@ export class UserMenuComponent implements OnInit {
   constructor(public loginService : LoginService, public router: Router) { }
 
   ngOnInit() {
-    this.username = localStorage.getItem('username')!;
-    this.profil = localStorage.getItem('profil')!;
+    this.username = sessionStorage.getItem('username')!;
+    this.profil = sessionStorage.getItem('profil')!;
   }
 
   onLogOut(){
-    this.loginService.logout();
-    localStorage.removeItem('username')
-    localStorage.removeItem('profil')
-    this.router.navigate(['/login']);
+    this.loginService.logout().subscribe(
+      () => {
+        console.log("déconnexion ok !")
+        sessionStorage.clear()
+        this.router.navigate(['/login']);
+      },(error) =>{
+        console.log(error)
+      }
+    );
   }
 
 }

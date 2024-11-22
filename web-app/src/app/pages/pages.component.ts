@@ -12,9 +12,6 @@ import { MatRadioModule } from '@angular/material/radio';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SidenavComponent } from '../theme/components/sidenav/sidenav.component';
-import { FullScreenComponent } from '../theme/components/fullscreen/fullscreen.component';
-import { FlagsMenuComponent } from '../theme/components/flags-menu/flags-menu.component';
-import { MessagesComponent } from '../theme/components/messages/messages.component';
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
 import { HorizontalMenuComponent } from '../theme/components/menu/horizontal-menu/horizontal-menu.component';
 import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
@@ -34,9 +31,6 @@ import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.c
     FlexLayoutModule,
     NgScrollbarModule,
     SidenavComponent,
-    FullScreenComponent,
-    FlagsMenuComponent,
-    MessagesComponent,
     UserMenuComponent,
     HorizontalMenuComponent,
     BreadcrumbComponent
@@ -49,6 +43,7 @@ export class PagesComponent implements OnInit {
   @ViewChild('backToTop') backToTop:any; 
   @ViewChild('mainSidenavContent') mainSidenavContent: any; 
   @ViewChild('mainContent') mainContent: ElementRef;
+  isAdmiOrMArkerter : boolean =false;
  
   public settings: Settings;
   public menus = ['vertical', 'horizontal'];
@@ -89,9 +84,14 @@ export class PagesComponent implements OnInit {
         } 
       }                
     });
-    if(this.settings.menu == "vertical") {
-      this.menuService.expandActiveSubMenu(this.menuService.getVerticalMenuItems());
-    } 
+    if(sessionStorage.getItem('profil')==="admin" || sessionStorage.getItem('profil')==="marketeur"){
+      this.isAdmiOrMArkerter = true;
+    }
+    if(this.settings.menu == "vertical" && !this.isAdmiOrMArkerter) {
+      this.menuService.expandActiveSubMenu(this.menuService.getVerticalMenuItems()); 
+    } else{
+      this.menuService.expandActiveSubMenu(this.menuService.getVerticalMenuItemsSimple()); 
+    }
   } 
 
   public chooseMenu(){

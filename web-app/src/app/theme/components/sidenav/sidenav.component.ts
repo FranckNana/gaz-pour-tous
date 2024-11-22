@@ -34,7 +34,12 @@ export class SidenavComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.menuItems = this.menuService.getVerticalMenuItems();
+    if(sessionStorage.getItem('profil')==="admin" || sessionStorage.getItem('profil')==="marketeur"){
+      this.menuItems = this.menuService.getVerticalMenuItems();
+    }else{
+      this.menuItems = this.menuService.getVerticalMenuItemsSimple();
+    }
+    
   }
 
   public closeSubMenus(){

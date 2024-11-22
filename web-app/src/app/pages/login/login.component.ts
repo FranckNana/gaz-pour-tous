@@ -50,17 +50,18 @@ export class LoginComponent {
     if (this.form.valid) {
       const formValue = this.form.value;
       const loginObj = new Login(formValue['password'], formValue['profil'], formValue['username']);
-      this.loginService.login(loginObj);/*.subscribe(
+      this.loginService.login(loginObj).subscribe(
         () => {
+          console.log("connexion ok !")
+          sessionStorage.setItem('username', loginObj.username);
+          sessionStorage.setItem('profil', loginObj.profil);
           this.router.navigate(['/gestion']);
         },(error) =>{
           this.isError = true;
           console.log(error)
         }
-      );*/
-      localStorage.setItem('username', loginObj.username);
-      localStorage.setItem('profil', loginObj.profil);
-      this.router.navigate(['/gestion']);
+      );
+      //this.router.navigate(['/gestion']);
     }
   }
 
