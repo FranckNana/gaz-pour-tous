@@ -3,10 +3,8 @@
         <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" fxFlex="80" fxFlex.gt-sm="30" fxFlex.sm="60" class="mat-elevation-z24">
             <mat-card class="p-0 box register">
                 <div fxLayout="column" fxLayoutAlign="center center" class="bg-primary box-header">
-                    <button mat-fab color="accent" class="mat-elevation-z12" (click)="onSubmit(form.value);">
-                        <mat-icon>person_add</mat-icon>
-                    </button>
-                    <a mat-button routerLink="/login">Avez vous déjà un compte? connectez-vous ici!</a>
+                    <img mat-card-image src="img/logo/logo.ico" alt="slogan" style="height: 40%;">
+                    <a mat-button routerLink="/login">Avez vous déjà un compte? <u>connectez-vous ici !</u></a>
                 </div>
                 <mat-card-content fxLayout="column" fxLayoutAlign="end center" class="box-content">
                     <mat-card fxLayout="column" fxLayoutAlign="center center" class="mat-elevation-z12 box-content-inner">

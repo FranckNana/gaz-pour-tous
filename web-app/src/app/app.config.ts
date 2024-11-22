@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     ), 
     provideAnimationsAsync(),
     provideHttpClient(),
-    importProvidersFrom(InMemoryWebApiModule.forRoot(UsersData, { delay: 1000 })),
+    //importProvidersFrom(InMemoryWebApiModule.forRoot(UsersData, { delay: 1000 })),
     importProvidersFrom(CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
