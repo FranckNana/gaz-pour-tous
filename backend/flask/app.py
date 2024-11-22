@@ -74,6 +74,7 @@ def home():
     if not allowConnexion():
         print("============== > User is not connected")
         return Response("Not authorized", 401)
+    print("============== > Test du print.. OK")
     return Response("Hello World! " + str(current_user))
 
 @app.route("/logout")

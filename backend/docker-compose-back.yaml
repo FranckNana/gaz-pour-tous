@@ -22,6 +22,7 @@ services:
       DEBUG: False
       DATABASE_URL: postgresql://postgres:${PG_PASSWORD}@db/${PG_DB}
       SessionTimeInSeconds: ${SessionTimeInSeconds}
+      PYTHONUNBUFFERED: TRUE
     ports:
       - 5000:5000
     depends_on:
