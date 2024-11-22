@@ -9,10 +9,12 @@ import pg_utils
 from utils import getParam, sint, MyEncoder
 import os
 from dotenv import load_dotenv
+from flask_cors import CORS, cross_origin
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 bcrypt = Bcrypt(app)
 app.config['SWAGGER'] = {
     'title': 'Gaz API',
