@@ -4,9 +4,6 @@ import {
 } from "./chunk-LGZSZRLO.js";
 import "./chunk-YTUVSWY5.js";
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-57EYAO2Y.js";
-import {
   animate,
   group,
   state,
@@ -57,6 +54,9 @@ import "./chunk-7BPGDGJM.js";
 import {
   Directionality
 } from "./chunk-CT3BUSLV.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-57EYAO2Y.js";
 import {
   CommonModule,
   DOCUMENT

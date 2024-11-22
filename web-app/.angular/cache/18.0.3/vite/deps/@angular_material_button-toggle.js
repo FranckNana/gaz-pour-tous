@@ -1,7 +1,4 @@
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-57EYAO2Y.js";
-import {
   SelectionModel
 } from "./chunk-LV4M4QBI.js";
 import {
@@ -24,6 +21,9 @@ import "./chunk-7BPGDGJM.js";
 import {
   Directionality
 } from "./chunk-CT3BUSLV.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-57EYAO2Y.js";
 import "./chunk-SX3LUSOW.js";
 import {
   Attribute,
