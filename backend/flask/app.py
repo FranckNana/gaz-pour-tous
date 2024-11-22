@@ -119,7 +119,7 @@ def register():
       LogResponse:
         type: object
         properties:
-          sucess:
+          success:
             type: boolean
       Profil:
         description: profil
@@ -196,7 +196,7 @@ def register():
                     ''', (accountId, profiles))
                 id = s.fetchone()[0]
                 c.commit()
-                return Response("{success: true}")
+                return Response(jsonEncoder.encode({"success": True}))
             except Exception as err:
                 print(f"Unexpected {err=}, {type(err)=}")
                 c.rollback()
@@ -261,7 +261,7 @@ def login():
                         return Response("Same account all ready connected", 401)
                     connectedUsers[user.username] = (datetime.datetime.now(), results[0][0])
                     login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
-                    return Response("{success: true}")
+                    return Response(jsonEncoder.encode({"success": True}))
             print(f"============== > Wrong credentials")
             return Response("Wrong credentials", 401)
 
@@ -333,7 +333,7 @@ def emplisseur_receive_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre remplie', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -378,7 +378,7 @@ def emplisseur_fill_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre livree au marketeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -423,7 +423,7 @@ def emplisseur_ship_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au marketeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -472,7 +472,7 @@ def marketeur_receive_full_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'chez marketeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -518,7 +518,7 @@ def marketeur_receive_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez marketeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -563,7 +563,7 @@ def marketeur_ship_full_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au revendeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -611,7 +611,7 @@ def revendeur_receive_full_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'pleine chez le revendeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -700,7 +700,7 @@ def revendeur_sell_bottle():
     try:
         pg_utils.addBottlePayment(bottleId, current_user.id, clientId, amount, mode)
         pg_utils.addBottleLog(bottleId, 'pleine chez le client', clientId)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -748,7 +748,7 @@ def revendeur_receive_empty_bottle():
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez le client', clientId)
         pg_utils.addBottleLog(bottleId, 'vide chez le revendeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -795,7 +795,7 @@ def revendeur_ship_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide en cours de livraison au marketeur', current_user.id)
-        return Response("{success: true}")
+        return Response(jsonEncoder.encode({"success": True}))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)

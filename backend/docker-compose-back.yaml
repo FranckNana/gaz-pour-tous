@@ -17,6 +17,7 @@ services:
       start_period: 10s  
   back-end:
     container_name: back-end
+    restart: always
     build: ./flask
     environment:
       DEBUG: False
@@ -31,6 +32,7 @@ services:
         - db
   pgadmin:
     image: dpage/pgadmin4
+    restart: always
     ports:
       - 8080:80
     environment:
