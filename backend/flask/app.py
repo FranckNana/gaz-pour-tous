@@ -99,7 +99,8 @@ def logout():
           type: string
     """
     if current_user.is_authenticated:
-        del connectedUsers[current_user.username]
+        if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
+            del connectedUsers[current_user.username]
     logout_user()
     return Response('Logged out')
 
