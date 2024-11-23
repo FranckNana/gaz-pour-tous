@@ -25,3 +25,8 @@ Sur `localhost:5000/apidocs` se trouve la doc swagger écrite à la main. N'hés
 #### username: sandy
 #### password: yesYes
 Ce compte a tous les profils.
+
+### Pour se connecter au PG admin
+#### username: gazdb@stack-it.fr
+#### password: gazman
+#### database: gazdb
