@@ -29,3 +29,4 @@ Ce compte a tous les profils.
 ### Pour se connecter au PG admin
 #### username: gazdb@stack-it.fr
 #### password: gazman
+#### database: gazdb
