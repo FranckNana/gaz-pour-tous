@@ -10,7 +10,7 @@ export class UsersService extends GeneralService<User> {
     constructor(public override http:HttpClient) { super(http);}
 
     public getUrl(): string {
-        return environment.BACKEND.USER_API;
+        return environment.BACKEND_ROUTES.USER_API;
     }
  
   

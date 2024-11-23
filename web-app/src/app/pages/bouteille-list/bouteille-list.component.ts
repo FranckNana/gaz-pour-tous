@@ -20,7 +20,7 @@ import { StatutEnum } from '../../models/statut.enum';
 })
 export class BouteilleListComponent  implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  public displayedColumns = ['identifiant', 'contenance', 'statut', 'date', 'detenteur', 'roleDetenteur'];
+  public displayedColumns = ['identifiant', 'contenance', 'statut', 'date', 'detenteur', 'roleDetenteur', 'capaciteEnKg'];
   public dataSource: any;
  
   constructor(private tablesService:BouteilleService) {

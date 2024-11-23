@@ -1,1 +1,48 @@
-<p>rapport-sub works!</p>
+<div class="container">
+    <h1>Tableau des Rapports</h1>
+  
+    <div class="filters">
+      <label for="filter">Filtrer par catégorie :</label>
+      <select id="filter" [(ngModel)]="selectedCategory" (change)="filterReports()">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+  
+    <table class="reports-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nom du Rapport</th>
+          <th>Catégorie</th>
+          <th>Date de Création</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of filteredReports; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ report.name }}</td>
+          <td>{{ report.category }}</td>
+          <td>{{ report.createdAt | date: 'longDate' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-download" (click)="downloadReport(report, 'pdf')">
+                <i class="fas fa-file-pdf"></i> PDF
+              </button>
+              <button class="btn btn-download" (click)="downloadReport(report, 'csv')">
+                <i class="fas fa-file-csv"></i> CSV
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div *ngIf="filteredReports.length === 0" class="no-data">
+      <p>Aucun rapport disponible pour cette catégorie.</p>
+    </div>
+  </div>
+  

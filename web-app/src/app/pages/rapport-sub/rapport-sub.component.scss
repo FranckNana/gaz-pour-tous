@@ -1,0 +1,105 @@
+/* Conteneur global */
+.container {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+/* Titre */
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Filtres */
+.filters {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters label {
+  font-weight: bold;
+  color: #555;
+}
+
+.filters select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Tableau des rapports */
+.reports-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.reports-table th {
+  background-color: #1b7c5d;;
+  color: #fff;
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.reports-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+}
+
+.reports-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Boutons */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn i {
+  font-size: 16px;
+}
+
+.btn.btn-download {
+  background-color: #1b7c5d;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.btn.btn-download:hover {
+  background-color: #43c900;
+}
+
+/* Texte "Pas de données" */
+.no-data {
+  text-align: center;
+  color: #888;
+  margin-top: 20px;
+  font-size: 16px;
+  font-style: italic;
+}
