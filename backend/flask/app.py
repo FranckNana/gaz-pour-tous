@@ -302,25 +302,27 @@ def login():
                       ''', (username, profil))
             results = s.fetchall()
             if len(results) == 1:
-                user = User(*results[0], datetime.datetime.now())
+                now = datetime.datetime.now()
+                user = User(*results[0], now)
                 if bcrypt.check_password_hash(user.passwordHash, password):
                     if user.username in connectedUsers and (datetime.datetime.now() - connectedUsers[user.username][0]).total_seconds() < sessionTimeInSeconds:
-                        print(f"============== > User already connected")
-                        return Response("Same account all ready connected", 401)
-                    connectedUsers[user.username] = (datetime.datetime.now(), results[0][0])
+                        print(f"============== > User already connected -- all of them will be disconnected")
+                        del connectedUsers[user.username]
+                        return Response("Same account all ready connected -- all of them will be disconnected", 401)
+                    connectedUsers[user.username] = (now, results[0][0])
                     login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
                     token = jwt.encode({
-                      'sub': user.id,
-                      'iat':time.time(),
-                      'exp': datetime.datetime.now() + timedelta(seconds=sessionTimeInSeconds)},
+                      'sub': user.username,
+                      'iat': datetime.datetime.timestamp(now),
+                      'exp': now + timedelta(seconds=sessionTimeInSeconds)},
                       app.config['SECRET_KEY'], algorithm='HS256')
                     return {"success": True, "token": token}
             print(f"============== > Wrong credentials")
             return Response("Wrong credentials", 401)
 
-def get_user_from_userId(userid):
-    print(f"================> Conditions to accept auth: {userid in connectedUsers}, {datetime.datetime.now()}, {sessionTimeInSeconds}")
-    if userid in connectedUsers and (datetime.datetime.now() - connectedUsers[userid][0]).total_seconds() < sessionTimeInSeconds:
+def get_user_from_userId(userid, connectionTimeFloat):
+    print(f"================> Conditions to accept auth: {userid in connectedUsers}, {userid}, {connectionTimeFloat}, {datetime.datetime.timestamp(connectedUsers[userid][0]) if userid in connectedUsers else False}, {connectedUsers}, {datetime.datetime.now()}, {sessionTimeInSeconds}")
+    if userid in connectedUsers and (datetime.datetime.now() - connectedUsers[userid][0]).total_seconds() < sessionTimeInSeconds and datetime.datetime.timestamp(connectedUsers[userid][0]) == connectionTimeFloat:
         with pg_utils.getConnection() as c:
             with c.cursor() as s:
                 s.execute(''' 
@@ -343,15 +345,13 @@ def get_user_from_userId(userid):
 
 @login_manager.user_loader
 def load_user(userid):
-    return get_user_from_userId(userid)
-
-
+    return get_user_from_userId(*eval(userid))
 
 @login_manager.request_loader
 def load_user_from_request(request):
     if session.get("_fresh") and session.get("_user_id") is not None:
         print("================> Using session")
-        current_userData = get_user_from_userId(session.get("_user_id"))
+        current_userData = get_user_from_userId(*eval(session.get("_user_id")))
         if current_userData is not None:
             return current_userData
     print("================> Using headers Authorization")
@@ -365,7 +365,7 @@ def load_user_from_request(request):
         print("================> token=" + token)
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         if data['sub'] is not None and data['exp'] > time.time():
-            return get_user_from_userId(data['sub'])
+            return get_user_from_userId(data['sub'], data['iat'])
     except jwt.ExpiredSignatureError as err:
         print(f"ExpiredSignatureError {err=}, {type(err)=}")
         return None

@@ -15,14 +15,13 @@ export class LoginService {
 
   login(login: Login) {
 
-    const headers = new HttpHeaders({
-      'Accept': 'text/plain'
-    });
+    // const headers = new HttpHeaders({
+    //   'Accept': 'text/plain'
+    // });
 
-    headers.append('Content-Type', 'application/json');
-    //let options = new RequestOptions({ headers: headers, withCredentials: true });
+    // headers.append('Content-Type', 'application/json');
 
-    return this.http.post<any>(this.server_url + environment.BACKEND_ROUTES.LOGIN_API_POST, login, { headers, observe: 'response', /*responseType: 'text' as 'json'*/ })
+    return this.http.post<any>(this.server_url + environment.BACKEND_ROUTES.LOGIN_API_POST, login)
           .pipe(tap(resp => {
             console.log(resp.headers.get('Set-cookie'))
             console.log(resp.headers.get('set-cookie'))

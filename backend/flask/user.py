@@ -1,9 +1,10 @@
 from flask_login import UserMixin
+import datetime
 
 class User(UserMixin):
 
     def __init__(self, accountProfilId, username, passwordHash, createdAt, profileType, connexionTime):
-        self.id = username
+        self.id = (username, datetime.datetime.timestamp(connexionTime))
         self.accountId = accountProfilId
         self.username = username
         self.passwordHash = passwordHash
