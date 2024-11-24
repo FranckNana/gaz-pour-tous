@@ -10,17 +10,56 @@ from utils import getParam, sint, MyEncoder
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS, cross_origin
+import jwt
+import time
 
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
 bcrypt = Bcrypt(app)
 app.config['SWAGGER'] = {
-    'title': 'Gaz API',
-    'uiversion': 3
+    'title': 'Gaz pour tous API doc',
+    'uiversion': 3,
 }
-swagger = Swagger(app)
+
+app.config['SECRET_KEY'] = 'your_strong_secret_key'
+app.config["JWT_SECRET_KEY"] = 'your_jwt_secret_key'
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
+
+
+template = {
+  "swagger": "2.0",
+  "info": {
+    "title": "Gaz API",
+    "description": "API for GPT",
+    "contact": {
+      "responsibleOrganization": "ME",
+      "responsibleDeveloper": "Me",
+      "email": "ouedraogo.wendlasida@gmail.com",
+    },
+    "version": "0.0.1"
+  },
+  "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "scheme": "bearer",
+            "in": "header",
+            "name": "Authorization",
+            "description": "\
+            JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+        }
+    },
+    "security": [
+        {
+            "Bearer": []
+        }
+    ]
+
+}
+
+
+swagger = Swagger(app, template=template)
+CORS(app, resources={r"/*": {"origins": "*"}})
 jsonEncoder = MyEncoder()
 
 connectedUsers = {}
@@ -197,7 +236,7 @@ def register():
                     ''', (accountId, profiles))
                 id = s.fetchone()[0]
                 c.commit()
-                return Response(jsonEncoder.encode({"success": True}))
+                return jsonify({"success": True})
             except Exception as err:
                 print(f"Unexpected {err=}, {type(err)=}")
                 c.rollback()
@@ -205,6 +244,7 @@ def register():
 
 
 @app.route("/login", methods=["POST"])
+@cross_origin()
 def login():
     """Endpoint to login.
     ---
@@ -228,7 +268,14 @@ def login():
       200:
         description: User registered
         schema:
-          $ref: '#/definitions/LogResponse'
+          id: User
+          properties:
+            token:
+              type: string
+              description: Token to add in Authorization
+            success:
+              type: boolean
+          
     """
     if isConnected():
         print(f"============== > User is connected")
@@ -262,12 +309,17 @@ def login():
                         return Response("Same account all ready connected", 401)
                     connectedUsers[user.username] = (datetime.datetime.now(), results[0][0])
                     login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
-                    return Response(jsonEncoder.encode({"success": True}))
+                    token = jwt.encode({
+                      'sub': user.id,
+                      'iat':time.time(),
+                      'exp': datetime.datetime.now() + timedelta(seconds=sessionTimeInSeconds)},
+                      app.config['SECRET_KEY'], algorithm='HS256')
+                    return {"success": True, "token": token}
             print(f"============== > Wrong credentials")
             return Response("Wrong credentials", 401)
 
-@login_manager.user_loader
-def load_user(userid):
+def get_user_from_userId(userid):
+    print(f"================> Conditions to accept auth: {userid in connectedUsers}, {datetime.datetime.now()}, {sessionTimeInSeconds}")
     if userid in connectedUsers and (datetime.datetime.now() - connectedUsers[userid][0]).total_seconds() < sessionTimeInSeconds:
         with pg_utils.getConnection() as c:
             with c.cursor() as s:
@@ -285,9 +337,42 @@ def load_user(userid):
                           ''', (connectedUsers[userid][1], ))
                 results = s.fetchall()
                 if len(results) == 1:
+                    print("================> user connected")
                     return User(*results[0], connectedUsers[userid][0])
     return None
 
+@login_manager.user_loader
+def load_user(userid):
+    return get_user_from_userId(userid)
+
+
+
+@login_manager.request_loader
+def load_user_from_request(request):
+    if session.get("_fresh") and session.get("_user_id") is not None:
+        print("================> Using session")
+        current_userData = get_user_from_userId(session.get("_user_id"))
+        if current_userData is not None:
+            return current_userData
+    print("================> Using headers Authorization")
+    auth_headers = request.headers.get('Authorization', '').split()
+    print("================> headers Authorization: " + str(auth_headers))
+    if len(auth_headers) != 2:
+        print("================> No token found")
+        return None
+    try:
+        token = auth_headers[1]
+        print("================> token=" + token)
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        if data['sub'] is not None and data['exp'] > time.time():
+            return get_user_from_userId(data['sub'])
+    except jwt.ExpiredSignatureError as err:
+        print(f"ExpiredSignatureError {err=}, {type(err)=}")
+        return None
+    except (jwt.InvalidTokenError, Exception) as err:
+        print(f"InvalidTokenError {err=}, {type(err)=}")
+        return None
+    return None
 
 #### Metier
 
@@ -334,7 +419,7 @@ def emplisseur_receive_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre remplie', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -379,7 +464,7 @@ def emplisseur_fill_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre livree au marketeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -424,7 +509,7 @@ def emplisseur_ship_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au marketeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -473,7 +558,7 @@ def marketeur_receive_full_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'chez marketeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -519,7 +604,7 @@ def marketeur_receive_empty_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez marketeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -564,7 +649,7 @@ def marketeur_ship_full_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au revendeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -612,7 +697,7 @@ def revendeur_receive_full_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'pleine chez le revendeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -701,7 +786,7 @@ def revendeur_sell_bottle():
     try:
         pg_utils.addBottlePayment(bottleId, current_user.accountId, clientId, amount, mode)
         pg_utils.addBottleLog(bottleId, 'pleine chez le client', clientId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -749,7 +834,7 @@ def revendeur_receive_empty_bottle():
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez le client', clientId)
         pg_utils.addBottleLog(bottleId, 'vide chez le revendeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
@@ -796,7 +881,7 @@ def revendeur_ship_bottle():
     bottleId = pg_utils.upsertBottle(bottleHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide en cours de livraison au marketeur', current_user.accountId)
-        return Response(jsonEncoder.encode({"success": True}))
+        return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
