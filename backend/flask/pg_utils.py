@@ -15,7 +15,7 @@ def upsertBottle(bottleHash, bottleCapacity = 12.5):
                       VALUES (%s, %s) 
                       ON CONFLICT ("QRCodeHash")
                       DO UPDATE SET
-                        "CapaciteEnKg" = EXCLUDED."CapaciteEnKg"
+                        "CapaciteEnKg" = "GasBottle"."CapaciteEnKg"
                       RETURNING "Id"
                       ''', (bottleHash, bottleCapacity))
             return s.fetchall()[0]
