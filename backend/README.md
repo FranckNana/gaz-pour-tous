@@ -38,4 +38,4 @@ Ce compte a tous les profils.
 #### requires: username, password, profil
 #### returns: token and set-cookies for session
 
-Pour l'utiliser, le swagger mets directement à jour les cookies et sessions... Si cela ne fonctionne pas pour vous, récuperer le token, et pour chaque requête, rajouter dans le header sur le champ `Authorization` la valeur `JWT [token]` ou `token` est la valeur du token de retour du login.. Cela devrait fonctionner après.
+Pour l'utiliser, le swagger mets directement à jour les cookies et sessions... Si cela ne fonctionne pas pour vous, récuperer le token, et pour chaque requête, rajouter dans le header sur le champ `Authorization` la valeur `JWT [token]` ou `[token]` est la valeur du token de retour du login.. Cela devrait fonctionner après.
