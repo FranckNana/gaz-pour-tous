@@ -22,7 +22,7 @@ def ignore_exception(IgnoreException=Exception,DefaultVal=None):
         return _dec
     return dec
 
-sint = ignore_exception(ValueError)(int)
+sint = ignore_exception(Exception)(int)
 
 class MyEncoder(JSONEncoder):
     def default(self, o):
