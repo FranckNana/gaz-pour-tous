@@ -19,13 +19,13 @@ import { PipesModule } from '../../theme/pipes/pipes.module';
 import { MatCardModule } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
+import { UserJson } from '../../common/models/userJson';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [ 
    SharedModule,
-    UserDialogComponent
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
@@ -33,7 +33,7 @@ import { SharedModule } from '../../shared/shared.module';
   providers: [UsersService]
 })
 export class UsersComponent implements OnInit {
-  public users: User[] | null;
+  public users: any[] | null;
   public searchText: string;
   public page:any;
   public settings: Settings;
@@ -44,12 +44,17 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getUsers();         
+    this.getUsers();    
   }
 
   public getUsers(): void {
     this.users = null; //for show spinner each time
-    this.usersService.getAll().subscribe(users => this.users = users);    
+    this.users = this.usersService.getAll();/*.subscribe(
+      users => {
+        this.users = users
+        console.log('Liste des utilisateurs reçue :', this.users);
+      }
+    ); */   
   }
   public addUser(user:User){
     this.usersService.add(user).subscribe(user => this.getUsers());

@@ -9,6 +9,16 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: environment.FRONTEND_ROUTES.BOUTEILES,
+        pathMatch: 'full'
+      },
+      {
+        path: environment.FRONTEND_ROUTES.BOUTEILES,
+        loadComponent: () => import('./bouteille-list/bouteille-list.component').then(c => c.BouteilleListComponent),
+        data: { breadcrumb: 'Bouteilles' },
+      },
+      {
+        path: environment.FRONTEND_ROUTES.DASHBOARD,
         loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent),
         data: { breadcrumb: 'Dashboard' },
       },
@@ -17,11 +27,7 @@ export const routes: Routes = [
         loadComponent: () => import('./users/users.component').then(c => c.UsersComponent),
         data: { breadcrumb: 'Users' },       
       },
-      {
-        path: environment.FRONTEND_ROUTES.BOUTEILES,
-        loadComponent: () => import('./bouteille-list/bouteille-list.component').then(c => c.BouteilleListComponent),
-        data: { breadcrumb: 'Bouteilles' },
-      },
+
       {
         path:  environment.FRONTEND_ROUTES.RAPPORTS,
         loadComponent: () => import('./rapport-sub/rapport-sub.component').then(c => c.RapportSubComponent),
@@ -34,4 +40,4 @@ export const routes: Routes = [
       },
     ]
   }
-];
+]; 

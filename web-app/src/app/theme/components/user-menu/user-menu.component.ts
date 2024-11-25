@@ -25,7 +25,7 @@ import { LoginService } from '@services/login.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class UserMenuComponent implements OnInit {
-  public userImage = 'img/users/user.jpg';
+  public userImage = 'img/users/default-user.jpg';
   username : string;
   profil: string;
 
@@ -37,7 +37,7 @@ export class UserMenuComponent implements OnInit {
   }
 
   onLogOut(){
-    this.loginService.logout().subscribe(
+    this.loginService.logout();/*.subscribe(
       () => {
         console.log("déconnexion ok !")
         sessionStorage.clear()
@@ -45,7 +45,9 @@ export class UserMenuComponent implements OnInit {
       },(error) =>{
         console.log(error)
       }
-    );
+    );*/
+    sessionStorage.clear()
+    this.router.navigate(['/login']);
   }
 
 }

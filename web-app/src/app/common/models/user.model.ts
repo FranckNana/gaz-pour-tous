@@ -15,7 +15,7 @@ export class UserProfile {
   birthday: Object;
   gender: string;
   image: string;
-}
+} 
 
 export class UserWork {
   company: string;

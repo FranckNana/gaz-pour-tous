@@ -51,8 +51,9 @@ export class LoginComponent {
       const formValue = this.form.value;
       const loginObj = new Login(formValue['password'], formValue['profil'], formValue['username']);
       this.loginService.login(loginObj).subscribe(
-        () => {
+        (response:any) => {
           console.log("connexion ok !")
+          localStorage.setItem('token', response["token"]);
           sessionStorage.setItem('username', loginObj.username);
           sessionStorage.setItem('profil', loginObj.profil);
           this.router.navigate(['/gestion']);
@@ -61,7 +62,6 @@ export class LoginComponent {
           console.log(error)
         }
       );
-      //this.router.navigate(['/gestion']);
     }
   }
 

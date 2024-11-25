@@ -1,7 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { UserData, UserJson } from "../common/models/userJson";
 
 export abstract class GeneralService <ITEM>{
+
     public abstract getUrl(): string;
     constructor(public http: HttpClient) {}
   
@@ -23,7 +25,10 @@ export abstract class GeneralService <ITEM>{
     public findById(id:string | number){
       return this.http.get<ITEM>(this.getUrl()+""+ id);
   }
-  public getAll(): Observable<ITEM[]>{
+  /*public getAll(): Observable<ITEM[]>{
     return this.http.get<ITEM[]>(this.getUrl());
+  }*/
+  public getAll() : UserJson[] {
+    return UserData.data;
   }
-  }
+}

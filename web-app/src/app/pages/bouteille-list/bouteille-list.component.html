@@ -6,7 +6,7 @@
             </mat-card-header>
             <mat-card-content class="pt-3">
                 <mat-form-field appearance="outline">
-                    <mat-select [formControl]="toppings2" multiple>
+                    <mat-select placeholder="choisir vos filtres" [formControl]="toppings2" multiple>
                         <mat-select-trigger>
                             {{toppings2.value ? toppings2.value[0] : ''}}
                             @if (toppings2.value?.length > 1) {
@@ -25,31 +25,22 @@
 
         <ng-container matColumnDef="identifiant">
             <mat-header-cell *matHeaderCellDef> Identifiant </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.identifiant}} </mat-cell>
-        </ng-container>         
-        <ng-container matColumnDef="contenance">
-            <mat-header-cell *matHeaderCellDef> Contenance </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.contenance}} </mat-cell>
-        </ng-container>     
+            <mat-cell *matCellDef="let element"> {{element.bottleId}} </mat-cell>
+        </ng-container>    
         <ng-container matColumnDef="statut">
             <mat-header-cell *matHeaderCellDef> Statut</mat-header-cell>
             <mat-cell *matCellDef="let element"> 
-                @if(isEncours(element)){
+                @if(isEmpty(element.state)){
                     <mat-chip color="warn" highlighted="true" class="info-chip">
-                        {{element.statut}} 
+                        {{element.state}} 
                     </mat-chip>
-                } @else if (isEnStock(element)) {
+                } @else if(isFilled(element.state)) {
+                    <mat-chip highlighted="true" class="info-chip">
+                        {{element.state}} 
+                    </mat-chip>
+                } @else if(isInProgress(element.state)) {
                     <mat-chip color="accent" highlighted="true" class="info-chip">
-                        {{element.statut}} 
-                    </mat-chip>
-                } @else if (isLivre(element)) {
-                    <mat-chip color="primary" highlighted="true" class="info-chip">
-                        {{element.statut}} 
-                    </mat-chip> 
-                }
-                @else if (isRemplis(element)) {
-                    <mat-chip color="blue" highlighted="true" class="info-chip">
-                        {{element.statut}} 
+                        {{element.state}} 
                     </mat-chip> 
                 }
                
@@ -57,19 +48,19 @@
         </ng-container>        
         <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date mis à jour </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.date_maj}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{element.last_update}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="detenteur">
             <mat-header-cell *matHeaderCellDef> Détenteur </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.detenteur}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{username}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="roleDetenteur">
             <mat-header-cell *matHeaderCellDef> Rôle du détenteur </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.roleDetenteur}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{profile}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="capaciteEnKg">
             <mat-header-cell *matHeaderCellDef> Capacite (en kg) </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.capaciteEnKg}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{element.capacity}} </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

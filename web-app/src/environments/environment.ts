@@ -6,7 +6,8 @@ export const environment = {
         USER_API: 'api/users',
         LOGIN_API_POST: '/login',
         LOGOUT_API_GET: '/logout',
-        REGISTER_API_POST: '/register'
+        REGISTER_API_POST: '/register',
+        CURRENT_BOTTLES_POST: '/current-bottles'
     },
 
     FRONTEND_ROUTES:{

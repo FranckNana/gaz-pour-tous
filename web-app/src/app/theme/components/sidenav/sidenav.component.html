@@ -5,16 +5,17 @@
   "
   class="sidenav-header"
 >
-  <a
+  <!--a
     mat-raised-button
     color="accent"
     routerLink="/"
     (click)="closeSubMenus()"
     class="small-logo"
-    >G</a
-  >
+    >G</a-->
+  <img mat-card-image src="img/logo/logo.ico" alt="slogan" style="height: 90%;">
   @if (settings.menuType == 'default') {
-  <a class="logo" routerLink="/" (click)="closeSubMenus()">GPT</a>
+  <img mat-card-image src="img/logo/texte-logo.ico" alt="slogan" style="width: 80%; height: 90%;">
+  <!--a class="logo" routerLink="/" (click)="closeSubMenus()">GPT</a-->
   } @if (settings.menuType != 'mini') {
   <svg
     class="pin"
