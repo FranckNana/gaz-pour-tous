@@ -21,5 +21,5 @@ export const environment = {
         PROFILE: 'profile'
 
     },
-    server_url: '192.168.65.1'
+    server_url: '176.130.142.9:5000'
   };
