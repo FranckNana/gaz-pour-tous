@@ -21,6 +21,8 @@ puis
 
 Sur `localhost:5000/apidocs` se trouve la doc swagger écrite à la main. N'hésitez pas en cas de retour.
 
+---
+
 ### Utilisateurs pour jouer
 #### username: sandy
 #### password: yesYes
@@ -52,6 +54,8 @@ Ce compte a tous les profils.
 #### username: 3000 - 0000 - 000
 #### password: 3000-0000-000
 #### profil: client
+
+---
 
 
 ### Pour se connecter au PG admin
