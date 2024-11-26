@@ -5,26 +5,54 @@ projet gaz pour tous
 
 Pour lancer, depuis le dossier `backend`:
 
-`docker-compose -f docker-compose-back.yaml up`
+`docker-compose up`
 
 Après un correctif, 
 
 
-`docker-compose -f docker-compose-back.yaml build --no-cache`
+`docker-compose build --no-cache`
 
 puis
 
-`docker-compose -f docker-compose-back.yaml up`
+`docker-compose up`
 
 
 ## Info Back-end
 
 Sur `localhost:5000/apidocs` se trouve la doc swagger écrite à la main. N'hésitez pas en cas de retour.
 
-### Un utilisateur pour jouer
+### Utilisateurs pour jouer
 #### username: sandy
 #### password: yesYes
 Ce compte a tous les profils.
+
+---
+
+#### username: 0000 - 0000 - 000
+#### password: 0000-0000-000
+#### profil: emplisseur
+
+---
+
+
+#### username: 1000 - 0000 - 000
+#### password: 1000-0000-000
+#### profil: marketeur
+
+---
+
+
+#### username: 2000 - 0000 - 000
+#### password: 2000-0000-000
+#### profil: revendeur
+
+---
+
+
+#### username: 3000 - 0000 - 000
+#### password: 3000-0000-000
+#### profil: client
+
 
 ### Pour se connecter au PG admin
 #### username: gazdb@stack-it.fr
