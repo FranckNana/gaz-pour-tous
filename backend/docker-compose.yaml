@@ -44,6 +44,14 @@ services:
       - db
     volumes:
       - ./servers.json:/pgadmin4/servers.json
+  web-app:
+    container_name: web-app
+    restart: always
+    build: ./../web-app
+    ports:
+      - 3000:3000
+    depends_on:
+      - back-end
 volumes:
   pgdata:
   initdb:
