@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "470806284809",
+    "project_id": "gaz-pour-tous",
+    "storage_bucket": "gaz-pour-tous.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470806284809:android:47828feb88cfe9002f86d8",
+        "android_client_info": {
+          "package_name": "fr.kompyuta.gazpourtous"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnOwjikGaqyOsZkYjyi-Z-y0AuIW03snQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

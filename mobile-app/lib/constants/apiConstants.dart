@@ -1,27 +1,35 @@
 class ApiConstants {
-  static const baseUrl = "http://35.180.117.75:5000";
-  static const fillerEndpoint = "$baseUrl/emplisseur";
-  static const fillerFillBottleEndpoint = "$fillerEndpoint/fill-empty-bottle";
-  static const fillerReceiveBottleEndpoint =
+  static String apiEndpoint = "";
+  static String baseUrl = "http://$apiEndpoint";
+  static String fillerEndpoint = "$baseUrl/emplisseur";
+  static String fillerFillBottleEndpoint = "$fillerEndpoint/fill-empty-bottle";
+  static String fillerReceiveBottleEndpoint =
       "$fillerEndpoint/receive-empty-bottle";
-  static const fillerShipBottleEndpoint = "$fillerEndpoint/ship-bottle";
-  static const marketerEndpoint = "$baseUrl/marketeur";
-  static const marketerReceiveEmptyBottleEndpoint =
+  static String fillerShipBottleEndpoint = "$fillerEndpoint/ship-bottle";
+  static String marketerEndpoint = "$baseUrl/marketeur";
+  static String marketerReceiveEmptyBottleEndpoint =
       "$marketerEndpoint/receive-empty-bottle";
-  static const marketerReceiveFilledBottleEndpoint =
+  static String marketerReceiveFilledBottleEndpoint =
       "$marketerEndpoint/receive-full-bottle";
-  static const marketerShipBottleEndpoint =
+  static String marketerShipBottleEndpoint =
       "$marketerEndpoint/ship-full-bottle";
-  static const currentBottlesEndpoint = "$baseUrl/current-bottles";
-  static const loginEndpoint = "$baseUrl/login";
-  static const logoutEndpoint = "$baseUrl/logout";
-  static const resellerEndpoint = "$baseUrl/revendeur";
-  static const resellerReceiveFilledBottleEndpoint =
+  static String currentBottlesEndpoint = "$baseUrl/current-bottles";
+  static String loginEndpoint = "$baseUrl/login";
+  static String logoutEndpoint = "$baseUrl/logout";
+  static String resellerEndpoint = "$baseUrl/revendeur";
+  static String resellerReceiveFilledBottleEndpoint =
       "$resellerEndpoint/receive-full-bottle";
-  static const resellerReceiveEmptyFromClientBottleEndpoint =
+  static String resellerReceiveEmptyFromClientBottleEndpoint =
       "$resellerEndpoint/receive-bottle-from-client";
-  static const resellerSellFilledBottleToClientEndpoint =
+  static String resellerSellFilledBottleToClientEndpoint =
       "$resellerEndpoint/sell-bottle";
-  static const resellerShipEmptyBottleToMarketerEndpoint =
+  static String resellerShipEmptyBottleToMarketerEndpoint =
       "$resellerEndpoint/ship-bottle";
+
+  static setEndpoint(String endpoint) {
+    print("========== remote config endpoint value ============");
+    apiEndpoint = endpoint;
+    print("=========  $endpoint ===============================");
+    print("========== remote config endpoint value ============");
+  }
 }
