@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 from user import User 
 from flasgger import Swagger
 import pg_utils
-from utils import getParam, sint, MyEncoder, ignore_exception
+from utils import getParam, sint, MyEncoder, ignore_exception, decrypt_unique_id, testCrypt
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS, cross_origin
@@ -69,6 +69,12 @@ connectedUsers = {}
 sessionTimeInSeconds = sint(os.getenv("SessionTimeInSeconds"))
 if sessionTimeInSeconds is None:
     sessionTimeInSeconds = 10 * 60
+
+defaultAESKey = os.getenv("AESSecretKey")
+if defaultAESKey is None:
+    defaultAESKey = b"WeAreKompyutaDeamTeamForSirexe=="
+else:
+    defaultAESKey = defaultAESKey.encode('UTF-8')
 
 def allowConnexion(profilType = None): 
     if not current_user.is_authenticated:
@@ -415,11 +421,11 @@ def emplisseur_receive_empty_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre remplie', current_user.accountId)
         return jsonify({"success": True})
@@ -461,11 +467,11 @@ def emplisseur_fill_empty_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} or bottleCapacity <= 0")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'prete a etre livree au marketeur', current_user.accountId)
         return jsonify({"success": True})
@@ -507,11 +513,11 @@ def emplisseur_ship_empty_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au marketeur', current_user.accountId)
         return jsonify({"success": True})
@@ -557,11 +563,11 @@ def marketeur_receive_full_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'chez marketeur', current_user.accountId)
         return jsonify({"success": True})
@@ -604,11 +610,11 @@ def marketeur_receive_empty_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez marketeur', current_user.accountId)
         return jsonify({"success": True})
@@ -650,11 +656,11 @@ def marketeur_ship_full_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au revendeur', current_user.accountId)
         return jsonify({"success": True})
@@ -699,11 +705,11 @@ def revendeur_receive_full_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'pleine chez le revendeur', current_user.accountId)
         return jsonify({"success": True})
@@ -796,14 +802,14 @@ def revendeur_sell_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     clientHash = getParam('clientHash', request.form, request.json)
     amount = sint(getParam('amount', request.form, request.json))
     mode = getParam('mode', request.form, request.json)
     if bottleHash is None or clientHash is None or amount is None or mode is None or amount <= 0 or bottleCapacity <= 0: 
         print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash} amount={amount} mode={mode} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     clientId = pg_utils.upsertClient(clientHash)
     try:
         pg_utils.addBottlePayment(bottleId, current_user.accountId, clientId, amount, mode)
@@ -848,11 +854,11 @@ def revendeur_receive_empty_bottle():
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
     clientHash = getParam('clientHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or clientHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash}  {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     clientId = pg_utils.upsertClient(clientHash)
     try:
         pg_utils.addBottleLog(bottleId, 'vide chez le client', clientId)
@@ -898,11 +904,11 @@ def revendeur_ship_bottle():
         print(f"============== > User is not connected to with the write profile {str(current_user)}")
         return Response("Not authorized", 401)
     bottleHash = getParam('bottleHash', request.form, request.json)
-    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json), 12.5)
+    bottleCapacity = ignoreExceptionDefault_12_5(getParam('bottleCapacity', request.form, request.json))
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(bottleHash, bottleCapacity)
+    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
         pg_utils.addBottleLog(bottleId, 'vide en cours de livraison au marketeur', current_user.accountId)
         return jsonify({"success": True})
@@ -971,6 +977,21 @@ def user_current_bottles():
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         return Response(repr(err), 403)
+
+
+############ Playground Debug -- Start
+# @app.route("/playground-hash", methods = ["GET"])
+# def hashPassword():
+#     return bcrypt.generate_password_hash(request.args.get('q')).decode('utf-8')
+
+# @app.route("/decrypt-qr", methods = ["GET"])
+# def decryptqr():
+#     return decrypt_unique_id(request.args.get('q'), defaultAESKey)
+
+# @app.route("/testcrypt-qr", methods = ["GET"])
+# def testcryptqr():
+#     return testCrypt(request.args.get('q'), defaultAESKey)
+############ Playground Debug -- End
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

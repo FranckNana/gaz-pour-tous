@@ -124,7 +124,13 @@ FOR ROW EXECUTE PROCEDURE "preventGasBottleIncorrectStateModification"();
 	
 --- Testing
 INSERT INTO "Account" ("Username", "PasswordHash")
-VALUES ('sandy', '$2b$12$pPmjYp5JvbCkJgXM0T6q3OrB.WQ5bMMN0zmLRj9DI/1gEtlQemIgC');
+VALUES 
+	('sandy', '$2b$12$pPmjYp5JvbCkJgXM0T6q3OrB.WQ5bMMN0zmLRj9DI/1gEtlQemIgC'),
+	('0000 - 0000 - 000', '$2b$12$rifDmvqZaZ/YzHKCmBD6Tum/JecfXFY.IrVW5cNY7ezOMBnklyY2a'),
+	('1000 - 0000 - 000', '$2b$12$/NAttS6I3WAE6Syg/pTAYe2FCmxyIFxH8EdpqCioMzjNvwCVDuxMu'),
+	('2000 - 0000 - 000', '$2b$12$RlaQvi0UFtzin7SSalDe9uRceHVlWX.qTvx/OvkdjX/T3buEQJALq'),
+	('3000 - 0000 - 000', '$2b$12$7jGY2HrLvlp20DRCp/RSJexRTHtpFCaQWu17QU1rTmp6eH1Mb71rm')
+;
 
 
 INSERT INTO "ProfilType" ("Name")
@@ -142,7 +148,11 @@ VALUES
 	('1', '2'),
 	('1', '3'),
 	('1', '4'),
-	('1', '5')
+	('1', '5'),
+	('2', '2'),
+	('3', '3'),
+	('4', '4'),
+	('5', '5')
 ;
 
 INSERT INTO "BottleState" ("StateName", "Order", "ProfilTypeId")

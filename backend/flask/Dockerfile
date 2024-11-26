@@ -11,4 +11,4 @@ COPY user.py .
 COPY utils.py .
 
 EXPOSE 5000
-CMD [ "python", "app.py"]
+CMD ["waitress-serve", "--listen=*:5000", "app:app"]
