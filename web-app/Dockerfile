@@ -17,4 +17,4 @@ COPY nginx.conf /etc/nginx/conf.d/nginx.conf
 
 COPY --from=build /usr/local/app/dist/gradus/browser /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3000
