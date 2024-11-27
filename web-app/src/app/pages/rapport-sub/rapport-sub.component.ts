@@ -20,7 +20,7 @@ export class RapportSubComponent {
     { id: 6, name: 'Rapport 6', category: 'Transporteurs', createdAt: new Date() },
     { id: 7, name: 'Rapport 7', category: 'Marketeurs', createdAt: new Date() },
     { id: 8, name: 'Rapport 8', category: 'Revendeurs', createdAt: new Date() },
-    { id: 9, name: 'Rapport 9', category: 'Clients', createdAt: new Date() },
+    { id: 9, name: 'Rapport 9', category: 'Ménages', createdAt: new Date() },
   ];
 
   categories = Array.from(new Set(this.reports.map((r) => r.category)));
