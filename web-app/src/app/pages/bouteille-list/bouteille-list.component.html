@@ -6,7 +6,8 @@
             </mat-card-header>
             <mat-card-content class="pt-3">
                 <mat-form-field appearance="outline">
-                    <mat-select placeholder="choisir vos filtres" [formControl]="toppings2" multiple>
+                    <mat-select placeholder="choisir vos filtres" [formControl]="toppings2" multiple
+                    [(value)]="selectedStatuses" (selectionChange)="filterStatus()">
                         <mat-select-trigger>
                             {{toppings2.value ? toppings2.value[0] : ''}}
                             @if (toppings2.value?.length > 1) {
@@ -48,7 +49,7 @@
         </ng-container>        
         <ng-container matColumnDef="date">
             <mat-header-cell *matHeaderCellDef> Date mis à jour </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.last_update}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{element.last_update | date: 'dd/MM/yyyy'}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="detenteur">
             <mat-header-cell *matHeaderCellDef> Détenteur </mat-header-cell>

@@ -33,7 +33,8 @@ export class BouteilleListComponent  implements OnInit {
   currentPageStart: number = 0;
   currentPageEnd: number = 0;
   totalItems: number = 0;
- 
+  selectedStatuses: string[] = [];
+
   constructor(private bouteillesService: BouteilleService) {}
 
   ngOnInit(){
@@ -101,4 +102,16 @@ export class BouteilleListComponent  implements OnInit {
     this.currentPageEnd = Math.min((pageIndex + 1) * pageSize, this.totalItems); // Index de fin
   }
 
+
+    filterStatus(): void {
+    if (this.selectedStatuses.length === 0) {
+      this.dataSource.filter = '';
+    } else {
+      this.dataSource.filterPredicate = (data: any, filter: string) => {
+        const selected = filter.split(',');
+        return selected.includes(data.status);
+      };
+      this.dataSource.filter = this.selectedStatuses.join(',');
+    }
+  }
 }
