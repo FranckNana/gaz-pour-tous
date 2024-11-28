@@ -9,23 +9,24 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: environment.FRONTEND_ROUTES.BOUTEILES,
+        redirectTo: environment.FRONTEND_ROUTES.DASHBOARD,
         pathMatch: 'full'
+      },
+      {
+        path: environment.FRONTEND_ROUTES.DASHBOARD,
+        loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent),
+        data: { breadcrumb: 'Tableau de bord' },
       },
       {
         path: environment.FRONTEND_ROUTES.BOUTEILES,
         loadComponent: () => import('./bouteille-list/bouteille-list.component').then(c => c.BouteilleListComponent),
         data: { breadcrumb: 'Bouteilles' },
       },
-      {
-        path: environment.FRONTEND_ROUTES.DASHBOARD,
-        loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent),
-        data: { breadcrumb: 'Dashboard' },
-      },
+
       {
         path: environment.FRONTEND_ROUTES.USERS,
         loadComponent: () => import('./users/users.component').then(c => c.UsersComponent),
-        data: { breadcrumb: 'Users' },       
+        data: { breadcrumb: 'Utilisateurs' },       
       },
 
       {

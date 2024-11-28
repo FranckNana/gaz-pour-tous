@@ -29,14 +29,19 @@ export class BouteilleListComponent  implements OnInit {
 
   username: string;
   profile: string;
+  
+  currentPageStart: number = 0;
+  currentPageEnd: number = 0;
+  totalItems: number = 0;
  
   constructor(private bouteillesService: BouteilleService) {}
 
   ngOnInit(){
 
     this.bouteillesService.getBouteilles().subscribe(
-      (response: any) => {
-        this.dataSource = new MatTableDataSource<any>(response);
+      (response: any[]) => {
+        this.dataSource = new MatTableDataSource<any[]>(response);
+        this.totalItems = response.length;
       },(error)=>{
         console.log("erreur lors de la récupération des boutielles !");
       }
@@ -81,6 +86,19 @@ export class BouteilleListComponent  implements OnInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+
+    // Écoute des changements de page
+    this.paginator.page.subscribe(() => this.updatePaginationInfo());
+    this.updatePaginationInfo(); // Initialisation des infos
+
+  }
+
+  updatePaginationInfo() {
+    const pageIndex = this.paginator.pageIndex;
+    const pageSize = this.paginator.pageSize;
+
+    this.currentPageStart = pageIndex * pageSize + 1; // Index de début
+    this.currentPageEnd = Math.min((pageIndex + 1) * pageSize, this.totalItems); // Index de fin
   }
 
 }

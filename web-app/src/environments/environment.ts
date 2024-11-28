@@ -23,5 +23,5 @@ export const environment = {
 
     },
 
-    server_url: 'http://localhost:5000'
+    server_url: 'http://15.236.11.157:5000'
 }
