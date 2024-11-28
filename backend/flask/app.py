@@ -314,9 +314,9 @@ def login():
                 user = User(*results[0], now)
                 if bcrypt.check_password_hash(user.passwordHash, password):
                     if user.username in connectedUsers and (datetime.datetime.now() - connectedUsers[user.username][0]).total_seconds() < sessionTimeInSeconds:
-                        print(f"============== > User already connected -- all of them will be disconnected")
+                        print(f"============== > User already connected -- first one will be disconnected")
                         del connectedUsers[user.username]
-                        return Response("Same account all ready connected -- all of them will be disconnected", 401)
+                        #return Response("Same account all ready connected -- all of them will be disconnected", 401)
                     connectedUsers[user.username] = (now, results[0][0])
                     login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
                     token = jwt.encode({
