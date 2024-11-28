@@ -72,7 +72,7 @@ def decrypt_unique_id(encrypted_id, key):
         return decrypted_data.decode()
     except Exception as e:
         print(f"Key '{key}'Exception {type(e)=} details {repr(e)}")
-        return encrypted_id
+        raise
     
 def testCrypt(uniqueId, key):
     return {"encrypted": encrypt_unique_id(uniqueId, key), "decrypted": decrypt_unique_id(encrypt_unique_id(uniqueId, key), key), "uniqueId": uniqueId}

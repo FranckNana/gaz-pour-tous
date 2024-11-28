@@ -248,7 +248,7 @@ def register():
             except Exception as err:
                 print(f"Unexpected {err=}, {type(err)=}")
                 c.rollback()
-                return Response(repr(err), 403)
+                return Response(repr(err), 400)
 
 
 @app.route("/login", methods=["POST"])
@@ -425,13 +425,13 @@ def emplisseur_receive_empty_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'prete a etre remplie', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
     
 @app.route("/emplisseur/fill-empty-bottle", methods = ["POST"])
 @login_required
@@ -471,13 +471,13 @@ def emplisseur_fill_empty_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} or bottleCapacity <= 0")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'prete a etre livree au marketeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
     
 @app.route("/emplisseur/ship-bottle", methods = ["POST"])
 @login_required
@@ -517,13 +517,13 @@ def emplisseur_ship_empty_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au marketeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
         
 
 #########################################################################
@@ -567,13 +567,13 @@ def marketeur_receive_full_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'chez marketeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
     
 @app.route("/marketeur/receive-empty-bottle", methods = ["POST"])
@@ -614,13 +614,14 @@ def marketeur_receive_empty_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
+    
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'vide chez marketeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 @app.route("/marketeur/ship-full-bottle", methods = ["POST"])
 @login_required
@@ -660,13 +661,13 @@ def marketeur_ship_full_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'en cours de livraison au revendeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 #########################################################################
 ## revendeur
@@ -709,13 +710,13 @@ def revendeur_receive_full_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'pleine chez le revendeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 
 @app.route("/revendeur/sell-bottle", methods = ["POST"])
@@ -809,15 +810,15 @@ def revendeur_sell_bottle():
     if bottleHash is None or clientHash is None or amount is None or mode is None or amount <= 0 or bottleCapacity <= 0: 
         print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash} amount={amount} mode={mode} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
-    clientId = pg_utils.upsertClient(clientHash)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
+        clientId = pg_utils.upsertClient(clientHash)
         pg_utils.addBottlePayment(bottleId, current_user.accountId, clientId, amount, mode)
         pg_utils.addBottleLog(bottleId, 'pleine chez le client', clientId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 @app.route("/revendeur/receive-bottle-from-client", methods = ["POST"])
 @login_required
@@ -858,15 +859,15 @@ def revendeur_receive_empty_bottle():
     if bottleHash is None or clientHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash}  {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
-    clientId = pg_utils.upsertClient(clientHash)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
+        clientId = pg_utils.upsertClient(clientHash)
         pg_utils.addBottleLog(bottleId, 'vide chez le client', clientId)
         pg_utils.addBottleLog(bottleId, 'vide chez le revendeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 
 
@@ -908,13 +909,13 @@ def revendeur_ship_bottle():
     if bottleHash is None or bottleCapacity <= 0:
         print(f"============== > Incorrect form: bottleHash={bottleHash} {bottleCapacity=}")
         return Response("Bad request", 400)
-    bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
     try:
+        bottleId = pg_utils.upsertBottle(decrypt_unique_id(bottleHash, defaultAESKey), bottleCapacity)
         pg_utils.addBottleLog(bottleId, 'vide en cours de livraison au marketeur', current_user.accountId)
         return jsonify({"success": True})
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 
 #########################################################################
@@ -976,7 +977,7 @@ def user_current_bottles():
         return jsonEncoder.encode(pg_utils.listUserBottle(current_user.accountId))
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
-        return Response(repr(err), 403)
+        return Response(repr(err), 400)
 
 
 ########### Playground Debug -- Start
@@ -984,6 +985,7 @@ def user_current_bottles():
 def hashPassword():
     """
     Verifies bottle Hash code
+    ---
     parameters:
       - name: q
         description: bottleHash
@@ -996,7 +998,11 @@ def hashPassword():
         type: boolean
 
     """
-    return decrypt_unique_id(request.args.get('q')).decode('utf-8') != request.args.get('q')
+    try:
+        decrypt_unique_id(request.args.get('q'), defaultAESKey)
+        return {"success": True}
+    except Exception as err:
+        return Response(repr(err), 400)
 
 # @app.route("/decrypt-qr", methods = ["GET"])
 # def decryptqr():
