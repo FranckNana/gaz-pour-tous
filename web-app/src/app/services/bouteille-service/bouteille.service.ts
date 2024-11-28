@@ -50,7 +50,7 @@ export interface Bouteille {
         'Authorization': `Bearer ${token}`
       });
 
-      return this.http.get<Bouteille>(this.server_url + environment.BACKEND_ROUTES.CURRENT_BOTTLES_POST, { headers } );/*.subscribe(
+      return this.http.get<Bouteille[]>(this.server_url + environment.BACKEND_ROUTES.CURRENT_BOTTLES_POST, { headers } );/*.subscribe(
         (response: any) => {
           this.bouteilles = response;
           //this.emitBouteilles();

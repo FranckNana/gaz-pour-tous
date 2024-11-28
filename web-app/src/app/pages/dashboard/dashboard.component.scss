@@ -1,3 +1,11 @@
 .fw-400{
     font-weight: 400;
 }
+#section1 {
+    height: 100vh; /* Pleine hauteur de l'écran */
+    color: #fff;
+    background-image: url("../../../../public/img/background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-position: center bottom 20px; /* Décale légèrement l'image vers le bas */
+}

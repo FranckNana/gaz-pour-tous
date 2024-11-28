@@ -3,7 +3,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { InfoCardsComponent } from './info-cards/info-cards.component';
+
 
 
 
@@ -14,8 +14,7 @@ import { InfoCardsComponent } from './info-cards/info-cards.component';
     SharedModule,
     FlexLayoutModule,
     MatCardModule,
-    MatIconModule,
-    InfoCardsComponent,
+    MatIconModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
