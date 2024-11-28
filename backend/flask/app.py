@@ -979,10 +979,24 @@ def user_current_bottles():
         return Response(repr(err), 403)
 
 
-############ Playground Debug -- Start
-# @app.route("/playground-hash", methods = ["GET"])
-# def hashPassword():
-#     return bcrypt.generate_password_hash(request.args.get('q')).decode('utf-8')
+########### Playground Debug -- Start
+@app.route("/verify-bottle-hash", methods = ["GET"])
+def hashPassword():
+    """
+    Verifies bottle Hash code
+    parameters:
+      - name: q
+        description: bottleHash
+        in: query
+        required: true
+        type: string
+    responses:
+      200:
+        description: Is code recognized
+        type: boolean
+
+    """
+    return decrypt_unique_id(request.args.get('q')).decode('utf-8') != request.args.get('q')
 
 # @app.route("/decrypt-qr", methods = ["GET"])
 # def decryptqr():
