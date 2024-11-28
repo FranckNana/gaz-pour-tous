@@ -45,7 +45,7 @@ services:
     volumes:
       - ./servers.json:/pgadmin4/servers.json
   web-app:
-    image: nanafranck/gpt-web-app-img
+    image: nanafranck/gpt-web-app-img2
     restart: always
     ports:
       - 3000:3000
