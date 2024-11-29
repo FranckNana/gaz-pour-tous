@@ -4,7 +4,7 @@ import datetime
 class User(UserMixin):
 
     def __init__(self, accountProfilId, username, passwordHash, createdAt, profileType, connexionTime):
-        self.id = (username, datetime.datetime.timestamp(connexionTime))
+        self.id = (username, datetime.datetime.timestamp(connexionTime), accountProfilId)
         self.accountId = accountProfilId
         self.username = username
         self.passwordHash = passwordHash

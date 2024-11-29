@@ -65,7 +65,7 @@ swagger = Swagger(app, template=template)
 CORS(app, resources={r"/*": {"origins": "*"}})
 jsonEncoder = MyEncoder()
 
-connectedUsers = {}
+#connectedUsers = {}
 sessionTimeInSeconds = sint(os.getenv("SessionTimeInSeconds"))
 if sessionTimeInSeconds is None:
     sessionTimeInSeconds = 10 * 60
@@ -79,20 +79,20 @@ else:
 def allowConnexion(profilType = None): 
     if not current_user.is_authenticated:
         return False
-    if (datetime.datetime.now() - current_user.connexionTime).total_seconds() > sessionTimeInSeconds:
-        if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
-            del connectedUsers[current_user.username]
-        logout_user()
-        return False
-    connectedUsers[current_user.username] = (current_user.connexionTime, current_user.accountId)
+    # if (datetime.datetime.now() - current_user.connexionTime).total_seconds() > sessionTimeInSeconds:
+    #     if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
+    #         del connectedUsers[current_user.username]
+    #     logout_user()
+    #     return False
+    # connectedUsers[current_user.username] = (current_user.connexionTime, current_user.accountId)
     if profilType is not None:
         return current_user.profileType == profilType
     return True
 
 def isConnected():
     if current_user.is_authenticated and (datetime.datetime.now() - current_user.connexionTime).total_seconds() > sessionTimeInSeconds:
-        if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
-            del connectedUsers[current_user.username]
+        # if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
+        #     del connectedUsers[current_user.username]
         logout_user()
         return False
     return current_user.is_authenticated
@@ -145,9 +145,9 @@ def logout():
         schema:
           type: string
     """
-    if current_user.is_authenticated:
-        if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
-            del connectedUsers[current_user.username]
+    # if current_user.is_authenticated:
+    #     if current_user.username in connectedUsers and connectedUsers[current_user.username][0] == current_user.connexionTime:
+    #         del connectedUsers[current_user.username]
     logout_user()
     return Response('Logged out')
 
@@ -313,14 +313,14 @@ def login():
                 now = datetime.datetime.now()
                 user = User(*results[0], now)
                 if bcrypt.check_password_hash(user.passwordHash, password):
-                    if user.username in connectedUsers and (datetime.datetime.now() - connectedUsers[user.username][0]).total_seconds() < sessionTimeInSeconds:
-                        print(f"============== > User already connected -- first one will be disconnected")
-                        del connectedUsers[user.username]
-                        #return Response("Same account all ready connected -- all of them will be disconnected", 401)
-                    connectedUsers[user.username] = (now, results[0][0])
+                    # if user.username in connectedUsers and (datetime.datetime.now() - connectedUsers[user.username][0]).total_seconds() < sessionTimeInSeconds:
+                    #     print(f"============== > User already connected -- first one will be disconnected")
+                    #     del connectedUsers[user.username]
+                    #     #return Response("Same account all ready connected -- all of them will be disconnected", 401)
+                    # connectedUsers[user.username] = (now, results[0][0])
                     login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
                     token = jwt.encode({
-                      'sub': user.username,
+                      'sub': user.accountId,
                       'iat': datetime.datetime.timestamp(now),
                       'exp': now + timedelta(seconds=sessionTimeInSeconds)},
                       app.config['SECRET_KEY'], algorithm='HS256')
@@ -328,38 +328,37 @@ def login():
             print(f"============== > Wrong credentials")
             return Response("Wrong credentials", 401)
 
-def get_user_from_userId(userid, connectionTimeFloat):
-    print(f"================> Conditions to accept auth: {userid in connectedUsers}, {userid}, {connectionTimeFloat}, {datetime.datetime.timestamp(connectedUsers[userid][0]) if userid in connectedUsers else False}, {connectedUsers}, {datetime.datetime.now()}, {sessionTimeInSeconds}")
-    if userid in connectedUsers and (datetime.datetime.now() - connectedUsers[userid][0]).total_seconds() < sessionTimeInSeconds and datetime.datetime.timestamp(connectedUsers[userid][0]) == connectionTimeFloat:
-        with pg_utils.getConnection() as c:
-            with c.cursor() as s:
-                s.execute(''' 
-                          SELECT 
-                            acc_prof."Id",  
-                            acc."Username",
-                            acc."PasswordHash",
-                            acc."CreatedAt",
-                            prof."Name"
-                          FROM "Account" acc 
-                          JOIN "AccountProfil" acc_prof ON acc_prof."AccountId" = acc."Id"
-                          JOIN "ProfilType" prof ON prof."Id" = acc_prof."ProfilTypeId"
-                          WHERE acc_prof."Id" = %s
-                          ''', (connectedUsers[userid][1], ))
-                results = s.fetchall()
-                if len(results) == 1:
-                    print("================> user connected")
-                    return User(*results[0], connectedUsers[userid][0])
+def get_user_from_userId(userid):
+    with pg_utils.getConnection() as c:
+        with c.cursor() as s:
+            s.execute(''' 
+                      SELECT 
+                        acc_prof."Id",  
+                        acc."Username",
+                        acc."PasswordHash",
+                        acc."CreatedAt",
+                        prof."Name"
+                      FROM "Account" acc 
+                      JOIN "AccountProfil" acc_prof ON acc_prof."AccountId" = acc."Id"
+                      JOIN "ProfilType" prof ON prof."Id" = acc_prof."ProfilTypeId"
+                      WHERE acc_prof."Id" = %s
+                      ''', (userid, ))
+            results = s.fetchall()
+            if len(results) == 1:
+                print("================> user connected")
+                return User(*results[0], datetime.datetime.now())
+
     return None
 
 @login_manager.user_loader
 def load_user(userid):
-    return get_user_from_userId(*eval(userid))
+    return get_user_from_userId(eval(userid)[2])
 
 @login_manager.request_loader
 def load_user_from_request(request):
     if session.get("_fresh") and session.get("_user_id") is not None:
         print("================> Using session")
-        current_userData = get_user_from_userId(*eval(session.get("_user_id")))
+        current_userData = get_user_from_userId(eval(session.get("_user_id")[2]))
         if current_userData is not None:
             return current_userData
     print("================> Using headers Authorization")
@@ -373,7 +372,7 @@ def load_user_from_request(request):
         print("================> token=" + token)
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         if data['sub'] is not None and data['exp'] > time.time():
-            return get_user_from_userId(data['sub'], data['iat'])
+            return get_user_from_userId(data['sub'])
     except jwt.ExpiredSignatureError as err:
         print(f"ExpiredSignatureError {err=}, {type(err)=}")
         return None
