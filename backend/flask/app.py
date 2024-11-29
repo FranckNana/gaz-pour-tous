@@ -352,6 +352,9 @@ def get_user_from_userId(userid):
 
 @login_manager.user_loader
 def load_user(userid):
+    print("================> user_loader")
+    print(userid)
+    print("================> user_loader")
     return get_user_from_userId(eval(userid)[2])
 
 @login_manager.request_loader
