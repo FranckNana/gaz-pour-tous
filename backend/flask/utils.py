@@ -71,7 +71,7 @@ def decrypt_unique_id(encrypted_id, key):
         decrypted_data = unpad(toBeUnpadded, AES.block_size)
         return decrypted_data.decode()
     except Exception as e:
-        print(f"Key '{key}'Exception {type(e)=} details {repr(e)}")
+        print(f"Key '{key}' Input '{encrypted_id}' Exception {type(e)=} details {repr(e)}")
         raise
     
 def testCrypt(uniqueId, key):

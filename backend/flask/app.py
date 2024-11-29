@@ -816,6 +816,7 @@ def revendeur_sell_bottle():
     clientHash = getParam('clientHash', request.form, request.json)
     amount = sint(getParam('amount', request.form, request.json))
     mode = getParam('mode', request.form, request.json)
+    print(f"============== > Input form: bottleHash={bottleHash} clientHash={clientHash} amount={amount} mode={mode} {bottleCapacity=}")
     if bottleHash is None or clientHash is None or amount is None or mode is None or amount <= 0 or bottleCapacity <= 0: 
         print(f"============== > Incorrect form: bottleHash={bottleHash} clientHash={clientHash} amount={amount} mode={mode} {bottleCapacity=}")
         return Response("Bad request", 400)
