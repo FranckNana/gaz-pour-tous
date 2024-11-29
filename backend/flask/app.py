@@ -320,7 +320,7 @@ def login():
                     # connectedUsers[user.username] = (now, results[0][0])
                     login_user(user, False, timedelta(seconds = sessionTimeInSeconds))
                     token = jwt.encode({
-                      'sub': user.accountId,
+                      'sub': str(user.accountId),
                       'iat': datetime.datetime.timestamp(now),
                       'exp': now + timedelta(seconds=sessionTimeInSeconds)},
                       app.config['SECRET_KEY'], algorithm='HS256')
@@ -370,7 +370,7 @@ def load_user_from_request(request):
           if current_userData is not None:
               return current_userData
         except Exception as err:
-          print(f"Unexpected {err=}, {type(err)=}")
+            print(f"Unexpected {err=}, {type(err)=}")
     print("================> Using headers Authorization")
     auth_headers = request.headers.get('Authorization', '').split()
     print("================> headers Authorization: " + str(auth_headers))
@@ -382,7 +382,7 @@ def load_user_from_request(request):
         print("================> token=" + token)
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         if data['sub'] is not None and data['exp'] > time.time():
-            return get_user_from_userId(data['sub'])
+            return get_user_from_userId(int(data['sub']))
     except jwt.ExpiredSignatureError as err:
         print(f"ExpiredSignatureError {err=}, {type(err)=}")
         return None
