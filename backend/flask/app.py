@@ -352,18 +352,25 @@ def get_user_from_userId(userid):
 
 @login_manager.user_loader
 def load_user(userid):
-    print("================> user_loader")
-    print(userid)
-    print("================> user_loader")
-    return get_user_from_userId(eval(userid)[2])
+    try:
+      print("================> user_loader")
+      print(userid)
+      print("================> user_loader")
+      return get_user_from_userId(eval(userid)[2])
+    except Exception as err:
+        print(f"Unexpected {err=}, {type(err)=}")
+        return None
 
 @login_manager.request_loader
 def load_user_from_request(request):
     if session.get("_fresh") and session.get("_user_id") is not None:
         print("================> Using session")
-        current_userData = get_user_from_userId(eval(session.get("_user_id")[2]))
-        if current_userData is not None:
-            return current_userData
+        try:
+          current_userData = get_user_from_userId(eval(session.get("_user_id")[2]))
+          if current_userData is not None:
+              return current_userData
+        except Exception as err:
+          print(f"Unexpected {err=}, {type(err)=}")
     print("================> Using headers Authorization")
     auth_headers = request.headers.get('Authorization', '').split()
     print("================> headers Authorization: " + str(auth_headers))
